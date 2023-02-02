@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "route": "b-role-settings-page",
+        "icon": "fas fa-key",
+        "title": "Roles & Permissions"
+    },
+    {
+        "id": 2,
+        "route": "b-theme-settings-page",
+        "icon": "far fa-image",
+        "title": "Theme Settings"
+    },
+    {
+        "id": 3,
+        "route": null,
+        "icon": "far fa-money-bill-alt",
+        "title": "Salary Settings"
+    },
+    {
+        "id": 4,
+        "route": null,
+        "icon": "fas fa-globe",
+        "title": "Notification"
+    },
+    {
+        "id": 5,
+        "route": null,
+        "icon": "fas fa-lock",
+        "title": "Change Password"
+    },
+    {
+        "id": 6,
+        "route": null,
+        "icon": "fas fa-pencil-alt-square-o",
+        "title": "Invoice Settings"
+    },
+    {
+        "id": 7,
+        "route": null,
+        "icon": "fas fa-cogs",
+        "title": "Leave Settings"
+    },
+    {
+        "id": 8,
+        "route": null,
+        "icon": "fas fa-building",
+        "title": "Company Settings"
+    }
+]

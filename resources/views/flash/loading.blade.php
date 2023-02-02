@@ -1,0 +1,3 @@
+<div wire:loading.block class="alert alert-light" role="alert">
+    Processing...
+</div>

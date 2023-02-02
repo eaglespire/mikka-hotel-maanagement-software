@@ -1,0 +1,61 @@
+{
+  "resources/js/components/PasswordForgot.jsx": {
+    "file": "assets/PasswordForgot-09fd1f79.js",
+    "src": "resources/js/components/PasswordForgot.jsx",
+    "isEntry": true,
+    "imports": [
+      "_jsx-runtime-e3755885.js",
+      "_jsx-runtime-282ed20e.js"
+    ]
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-4ed993c7.js",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.jsx": {
+    "file": "assets/app-91bd2aea.js",
+    "src": "resources/js/app.jsx",
+    "isEntry": true,
+    "imports": [
+      "_jsx-runtime-282ed20e.js"
+    ],
+    "dynamicImports": [
+      "_lodash-11ee1c7c.js",
+      "node_modules/bootstrap/dist/js/bootstrap.esm.js",
+      "node_modules/axios/index.js"
+    ]
+  },
+  "_jsx-runtime-e3755885.js": {
+    "file": "assets/jsx-runtime-e3755885.js",
+    "imports": [
+      "_jsx-runtime-282ed20e.js"
+    ]
+  },
+  "resources/js/components/Greeting.jsx": {
+    "file": "assets/Greeting-dc22a9b7.js",
+    "src": "resources/js/components/Greeting.jsx",
+    "isEntry": true,
+    "imports": [
+      "_jsx-runtime-e3755885.js",
+      "_jsx-runtime-282ed20e.js"
+    ]
+  },
+  "node_modules/axios/index.js": {
+    "file": "assets/index-351f09f4.js",
+    "src": "node_modules/axios/index.js",
+    "isDynamicEntry": true
+  },
+  "_jsx-runtime-282ed20e.js": {
+    "file": "assets/jsx-runtime-282ed20e.js"
+  },
+  "node_modules/bootstrap/dist/js/bootstrap.esm.js": {
+    "file": "assets/bootstrap.esm-00bb6f32.js",
+    "src": "node_modules/bootstrap/dist/js/bootstrap.esm.js",
+    "isDynamicEntry": true
+  },
+  "_lodash-11ee1c7c.js": {
+    "file": "assets/lodash-11ee1c7c.js",
+    "isDynamicEntry": true
+  }
+}

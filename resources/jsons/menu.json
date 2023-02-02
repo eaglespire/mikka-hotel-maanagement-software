@@ -1,0 +1,297 @@
+[
+    {
+        "id": 1,
+        "title": "Dashboard",
+        "icon": "fas fa-tachometer-alt",
+        "items": null,
+        "route": "b-dashboard"
+    },
+
+    {
+        "id": 2,
+        "title": "Booking",
+        "icon": "fas fa-suitcase",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "",
+                "title": "All Booking",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": "",
+                "title": "Add Booking",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Customers",
+        "icon": "fas fa-users",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "",
+                "title": "All Customers",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": "",
+                "title": "Add Customer",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Rooms",
+        "icon": "fas fa-key",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": null,
+                "title": "All Rooms",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": null,
+                "title": "Add Room",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "title": "Staff",
+        "icon": "fas fa-users",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "b-staff-list-page",
+                "title": "All Staff",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": "b-create-staff",
+                "title": "Add Staff",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "title": "Categories",
+        "icon": "far fa-money-bill-alt",
+        "route": "",
+        "items": null
+    },
+    {
+        "id": 7,
+        "title": "Apps",
+        "icon": "fas fa-share-alt",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "",
+                "title": "Chat",
+                "icon": "fas fa-comments",
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": "",
+                "title": "Email",
+                "icon": "fas fa-envelope",
+                "sub": [
+                    {
+                        "id": 1,
+                        "route": "",
+                        "title": "Compose"
+                    },
+                    {
+                        "id": 2,
+                        "route": "",
+                        "title": "Inbox"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "title": "Employees",
+        "icon": "fas fa-user",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "",
+                "title": "Employees List",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": "",
+                "title": "Leaves",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 3,
+                "route": "",
+                "title": "Holidays",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 4,
+                "route": "",
+                "title": "Attendance",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "title": "Accounts",
+        "icon": "far fa-money-bill-alt",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "",
+                "title": "Invoices",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": "",
+                "title": "Payments",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 3,
+                "route": "",
+                "title": "Expenses",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 4,
+                "route": "",
+                "title": "Taxes",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "title": "Payroll",
+        "icon": "fas fa-book",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "",
+                "title": "Employee Salary",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 11,
+        "title": "Calendar",
+        "icon": "fas fa-calendar-alt",
+        "items": null,
+        "route": ""
+    },
+    {
+        "id": 12,
+        "title": "Blog",
+        "icon": "far fa-comment-dots",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "",
+                "title": "All Blogs",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": "",
+                "title": "Add Blog",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "title": "Assets",
+        "icon": "fas fa-cube",
+        "items": null,
+        "route": ""
+    },
+    {
+        "id": 14,
+        "title": "Activities",
+        "icon": "far fa-bell",
+        "items": null,
+        "route": ""
+    },
+    {
+        "id": 15,
+        "title": "Reports",
+        "icon": "far fa-flag",
+        "route": null,
+        "items": [
+            {
+                "id": 1,
+                "route": "",
+                "title": "Expense Report",
+                "icon": null,
+                "sub": null
+            },
+            {
+                "id": 2,
+                "route": "",
+                "title": "Invoice Report",
+                "icon": null,
+                "sub": null
+            }
+        ]
+    },
+    {
+        "id": 16,
+        "title": "Settings",
+        "icon": "fas fa-cog",
+        "items": null,
+        "route": "b-theme-settings-page"
+    }
+]
