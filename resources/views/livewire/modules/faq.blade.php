@@ -1,28 +1,36 @@
 <div class="row">
     <div class="col-lg-12">
+        <div class="d-flex justify-content-between my-2 align-items-center">
+            <div class="d-flex align-items-center">
+                <h4 class="header-title mr-2">FAQ</h4>
+                @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                    <button class="btn btn-primary" wire:click.prevent="$emit('open-modal')">
+                        <i class="ion ion-md-create"></i> Create
+                    </button>
+                @endcan
+            </div>
+            <a href="{{ url()->previous() }}" class="btn btn-primary">
+                <i class="typcn typcn-chevron-left"></i> Back
+            </a>
+        </div>
         <div class="card">
             <div class="card-body">
                 <div class="row justify-content-center">
                     <div class="col">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="mt-0 font-18 mb-4"><i class="ti-agenda text-primary mr-2"></i>FAQ</h5>
-                            <button wire:click.prevent="$emit('open-modal')" class="btn btn-primary">
-                                <i class="typcn typcn-plus"></i> Add Faq
-                            </button>
-                        </div>
-                        <hr>
                         <div class="accordion" id="accordionExample">
                             @if($items->total() > 0)
                                 @foreach($items as $item)
                                     <div class="card mb-0">
-                                        <div class="d-lg-flex" style="cursor: pointer">
-                                            <i wire:click.prevent="$emit('open-edit-modal',{{ $item['id'] }},'{{ $item['question'] }}','{{
+                                        @can(\App\Services\Permissions::CAN_UPDATE_BLOG_POST && \App\Services\Permissions::CAN_DELETE_BLOG_POST)
+                                            <div class="d-lg-flex" style="cursor: pointer">
+                                                <i wire:click.prevent="$emit('open-edit-modal',{{ $item['id'] }},'{{ $item['question'] }}','{{
                                             $item['answer'] }}')" class="typcn
                                             typcn-edit text-primary" style="font-size: 30px"></i>
-                                            <i wire:click.prevent="DeleteFaq({{ $item['id'] }})" class="typcn typcn-delete text-danger"
-                                               style="font-size:
+                                                <i wire:click.prevent="DeleteFaq({{ $item['id'] }})" class="typcn typcn-delete text-danger"
+                                                   style="font-size:
                                             30px"></i>
-                                        </div>
+                                            </div>
+                                        @endcan
                                         <a data-toggle="collapse" href="#collapse{{ $loop->iteration }}" class="faq" aria-expanded="true"
                                            aria-controls="collapseOne">
                                             <div class="card-header text-light" id="headingOne">

@@ -1,21 +1,23 @@
 <div class="row" wire:key="calendar-module-{{ Str::random() }}">
     <div class="col-md-12">
-        <div class="flex-wrap d-flex justify-content-between align-items-center">
-            <h3>Hi, {{ auth()->user()->fullname }}!</h3>
-            <button class="btn btn-primary" wire:click.prevent="ToggleModal">
-                Add Event <i class="ti-marker-alt"></i>
-            </button>
+        <div class="d-flex justify-content-between my-2 align-items-center">
+            <div class="d-flex align-items-center">
+                <h4 class="header-title mr-2">Calendar</h4>
+                @can(\App\Services\Permissions::CAN_MANAGE_SETTINGS)
+                    <button class="btn btn-primary" wire:click.prevent="ToggleModal">
+                        <i class="ion ion-md-create"></i> Create
+                    </button>
+                @endcan
+            </div>
+            <a href="{{ url()->previous() }}" class="btn btn-primary">
+                <i class="typcn typcn-chevron-left"></i> Back
+            </a>
         </div>
     </div>
 
     <div class="col-md-12 my-3">
         @if($events->count() !== 0)
             <div class="card">
-                <div class="card-header d-flex justify-content-between">
-                    <div class="header-title">
-                        <h4 class="card-title">Event List</h4>
-                    </div>
-                </div>
                 <div class="card-body">
                     <div class="table-responsive border rounded">
                         <table id="user-list-table" class="table table-striped" role="grid" data-toggle="data-table">
@@ -25,7 +27,9 @@
                                 <th>Name</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th style="min-width: 100px">Action</th>
+                                @can(\App\Services\Permissions::CAN_MANAGE_SETTINGS)
+                                    <th style="min-width: 100px">Action</th>
+                                @endcan
                             </tr>
                             </thead>
                             <tbody>
@@ -35,16 +39,18 @@
                                     <td>{{ $event->name }}</td>
                                     <td>{{ $event->start_time }}</td>
                                     <td>{{ $event->finish_time }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center list-user-action">
-                                            <button class="btn btn-secondary mr-1" wire:click.prevent="LaunchEditModal({{ $event->id }})">
-                                                <i class="ti-marker-alt"></i> edit
-                                            </button>
-                                            <button wire:click.prevent="$emit('delete-event',{{ $event->id }})" class="btn btn-danger">
-                                                <i class="ti-trash"></i> trash
-                                            </button>
-                                        </div>
-                                    </td>
+                                    @can(\App\Services\Permissions::CAN_MANAGE_SETTINGS)
+                                        <td>
+                                            <div class="d-flex align-items-center list-user-action">
+                                                <button class="btn btn-secondary mr-1" wire:click.prevent="LaunchEditModal({{ $event->id }})">
+                                                    <i class="ti-marker-alt"></i> edit
+                                                </button>
+                                                <button wire:click.prevent="$emit('delete-event',{{ $event->id }})" class="btn btn-danger">
+                                                    <i class="ti-trash"></i> trash
+                                                </button>
+                                            </div>
+                                        </td>
+                                    @endcan
                                 </tr>
                             @endforeach
                             </tbody>

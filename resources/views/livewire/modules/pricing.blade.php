@@ -1,4 +1,4 @@
-<div class="row" wire:key="pricing-{{ Str::random() }}">
+<div class="row mb-5" wire:key="pricing-{{ Str::random() }}">
     <!-- Alpine Modal -->
     <x-pricing :header="$header">
         <form>
@@ -113,66 +113,70 @@
     </x-pricing>
     <!-- Alpine Modal -->
     <div class="col-12">
-        <div class="d-lg-flex justify-content-end my-2">
-            <button wire:click.prevent="OpenModal(0)" type="button" class="btn btn-primary waves-effect waves-light">
-                Add new  <i class="dripicons-plus"></i>
-            </button>
+        <div class="d-flex justify-content-between my-2 align-items-center">
+            <div class="d-flex align-items-center">
+                <h4 class="header-title mr-2">Pricing List</h4>
+                @can(\App\Services\Permissions::CAN_CREATE_EXPENSE)
+                    <button class="btn btn-primary" wire:click.prevent="OpenModal(0)">
+                        <i class="ion ion-md-create"></i> Create
+                    </button>
+                @endcan
+            </div>
+            <a href="{{ url()->previous() }}" class="btn btn-primary">
+                <i class="typcn typcn-chevron-left"></i> Back
+            </a>
         </div>
     </div>
 
     @if(count($pricing) !== 0)
-        @foreach($pricing as $item)
-            <div class="col-xl-3 col-md-6">
-                <div class="card pricing-box">
-                    <div class="card-body">
-                        <div class="mb-4 pt-3 pb-3">
-                            <div class="pricing-icon float-left">
-                                <i class="ion ion-ios-airplane"></i>
-                            </div>
-                            <div class="text-right">
-                                <h5 class="mt-0">{{ $item['title'] }}</h5>
-                                <p class="text-muted">{{ $item['subtitle'] }}</p>
-                            </div>
-                        </div>
-                        @if(isset($item->features) && count($item->features) !== 0)
-                            <div class="pricing-features mb-4">
-                                @foreach($item->features as $feature)
-                                    <p><i class="mdi mdi-check text-primary mr-2"></i> {{ $feature->name }}</p>
-                                @endforeach
-                            </div>
-                        @endif
-                        <div class="text-center pt-3 pb-3">
-                            <h2><sup><small>$</small></sup>{{ number_format($item['price']) }}/<span class="font-16">Per month</span></h2>
-                        </div>
-                        <div class="mt-4">
-                            <a
-                                x-on:click="hideModal=false"
-                               href="#"
-                               class="btn btn-primary waves-effect waves-light "
-                               wire:click.prevent="OpenModal(1, '{{ $item['id'] }}')"
-                            >
-                            Edit
-                            </a>
-                            <a wire:click.prevent="$emit('begin-delete',{{ $item['id'] }})" href="#" class="btn btn-danger  waves-effect
+        <div class="col-12 my-2">
+            <div class="row mb-5">
+                @foreach($pricing as $item)
+                    <div class="my-2 col-xl-3 col-6">
+                        <div class="card pricing-box h-100">
+                            <div class="card-body">
+                                <div class="mb-4 pt-3 pb-3">
+                                    <div class="pricing-icon float-left">
+                                        <i class="ion ion-ios-airplane"></i>
+                                    </div>
+                                    <div class="text-right">
+                                        <h5 class="mt-0">{{ $item['title'] }}</h5>
+                                        <p class="text-muted">{{ $item['subtitle'] }}</p>
+                                    </div>
+                                </div>
+                                @if(isset($item->features) && count($item->features) !== 0)
+                                    <div class="pricing-features mb-4">
+                                        @foreach($item->features as $feature)
+                                            <p><i class="mdi mdi-check text-primary mr-2"></i> {{ $feature->name }}</p>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                <div class="text-center pt-3 pb-3">
+                                    <h2><sup><small>$</small></sup>{{ number_format($item['price']) }}/<span class="font-16">Per month</span></h2>
+                                </div>
+                                @can(\App\Services\Permissions::CAN_UPDATE_EXPENSE && \App\Services\Permissions::CAN_DELETE_EXPENSE)
+                                    <div class="mt-4">
+                                        <a
+                                            x-on:click="hideModal=false"
+                                            href="#"
+                                            class="btn btn-primary waves-effect waves-light "
+                                            wire:click.prevent="OpenModal(1, '{{ $item['id'] }}')"
+                                        >
+                                            Edit
+                                        </a>
+                                        <a wire:click.prevent="$emit('begin-delete',{{ $item['id'] }})" href="#" class="btn btn-danger  waves-effect
                             waves-light">Delete</a>
+                                    </div>
+                                @endcan
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <!-- end col -->
+                @endforeach
             </div>
-            <!-- end col -->
-        @endforeach
+        </div>
+
     @endif
-
-
-
-
-
-
-
-
-
-
-
 </div>
 
 @push('scripts')

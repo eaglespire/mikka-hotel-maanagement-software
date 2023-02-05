@@ -47,8 +47,13 @@
                         </div>
                         <img class="img-fluid" src="{{ $room->firstImage }}" alt="Card image cap">
                         <div class="card-body">
-                            <a href="{{ route('b-edit-room', $room->slug) }}" class="btn btn-primary">Edit</a>
-                            <a href="#" class="btn btn-danger">Delete</a>
+                            @can(\App\Services\Permissions::CAN_UPDATE_ROOM)
+                                <a href="{{ route('b-edit-room', $room->slug) }}" class="btn btn-primary">Edit</a>
+                            @endcan
+
+                            @can(\App\Services\Permissions::CAN_DELETE_ROOM)
+                                <a href="#" class="btn btn-danger">Delete</a>
+                            @endcan
                         </div>
                     </div>
                 </div>

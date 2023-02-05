@@ -1,10 +1,17 @@
 <div class="card" wire:key="blog-module-{{ Str::random() }}">
     <div class="card-body">
-        <div class="d-flex justify-content-between my-2">
-            <h4 class="mt-0 header-title">All Blog</h4>
-            <button class="btn btn-primary" wire:click.prevent="OpenModal">
-                <i class="ion ion-md-create"></i> Create
-            </button>
+        <div class="d-flex justify-content-between my-2 align-items-center">
+            <div class="d-flex align-items-center">
+                <h4 class="header-title mr-2">All Blog</h4>
+                @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                    <button class="btn btn-primary" wire:click.prevent="OpenModal">
+                        <i class="ion ion-md-create"></i> Create
+                    </button>
+                @endcan
+            </div>
+            <a href="{{ url()->previous() }}" class="btn btn-primary">
+                <i class="typcn typcn-chevron-left"></i> Back
+            </a>
         </div>
         <div class="table-responsive">
             <table class="table table-sm m-0">
@@ -14,7 +21,9 @@
                     <th>Title</th>
                     <th>Views</th>
                     <th>Category</th>
-                    <th>Action</th>
+                    @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                        <th>Action</th>
+                    @endcan
                 </tr>
                 </thead>
                 <tbody>
@@ -25,25 +34,29 @@
                             <td style="cursor: pointer" onclick="window.location = '{{ route('b-post',['post' => $post]) }}'">{{ Str::limit($post->title) }}</td>
                             <td>{{ $post->reads }}</td>
                             <td>{{ $post->postcategory->name }}</td>
-                            <td>
-                                <div class="d-flex">
-                                    <button wire:click.prevent="OpenModal(1,'{{ $post->id }}')" class="btn btn-secondary mr-1">
-                                        <i class="dripicons-document-edit"></i> edit
-                                    </button>
-                                    <button wire:click.prevent="$emit('delete',{{ $post->id }})" class="btn btn-danger mr-1">
-                                        <i class="ion ion-md-trash"></i> delete
-                                    </button>
-                                    @if($post->published === 1)
-                                        <button wire:click.prevent="PublishPost({{ $post->id }},'0')"  class="btn btn-success mr-1">
-                                            <i class="ion ion-md-trash"></i> UnPublish
+                            @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                                <td>
+                                    <div class="d-flex">
+                                        <button wire:click.prevent="OpenModal(1,'{{ $post->id }}')" class="btn btn-secondary mr-1">
+                                            <i class="dripicons-document-edit"></i> edit
                                         </button>
-                                    @else
-                                        <button wire:click.prevent="PublishPost({{ $post->id }},'1')" class="btn btn-secondary mr-1">
-                                            <i class="ion ion-md-trash"></i> publish
-                                        </button>
-                                    @endif
-                                </div>
-                            </td>
+                                        @can(\App\Services\Permissions::CAN_DELETE_BLOG_POST)
+                                            <button wire:click.prevent="$emit('delete',{{ $post->id }})" class="btn btn-danger mr-1">
+                                                <i class="ion ion-md-trash"></i> delete
+                                            </button>
+                                        @endcan
+                                        @if($post->published === 1)
+                                            <button wire:click.prevent="PublishPost({{ $post->id }},'0')"  class="btn btn-success mr-1">
+                                                <i class="ion ion-md-checkmark"></i> hide
+                                            </button>
+                                        @else
+                                            <button wire:click.prevent="PublishPost({{ $post->id }},'1')" class="btn btn-secondary mr-1">
+                                                <i class="ion ion-md-open"></i> publish
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            @endcan
                         </tr>
                     @endforeach
                 @else
@@ -53,7 +66,7 @@
             </table>
         </div>
         @if($posts->total() > 0 && $posts->count() < $posts->total())
-            <button wire:click="LoadMore" wire:loading.remove class="btn btn-primary">
+            <button wire:click="LoadMore" wire:loading.remove class="btn btn-primary my-2">
                 {{__('See more')}}
             </button>
         @endif

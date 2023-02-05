@@ -10,18 +10,21 @@ use App\Models\Post;
 use App\Models\Room;
 use App\Services\CacheKeys;
 use App\Services\Constant;
+use App\Services\Permissions;
 use App\Traits\CloudinaryFileServer;
 use App\Traits\CustomPagination;
 use App\Traits\HasInternet;
 use App\Traits\UserImage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use RealRashid\SweetAlert\Facades\Alert;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -126,86 +129,114 @@ class DashboardController extends Controller
     }
     public function Roles()
     {
-        $this->data['title'] = "User roles";
-        $this->data['titleText'] = "Available user roles";
+        if (auth()->user()->can(Permissions::CAN_READ_ROLES)){
+            $this->data['title'] = "User roles";
+            $this->data['titleText'] = "Available user roles";
 
-        //fetch all the roles except the super admin role
-        $roles = Role::whereNotIn('name',['Moderator'])->get();
-        return view('dashboard.role.index',$this->data, compact('roles'));
+            //fetch all the roles except the super admin role
+            $roles = Role::whereNotIn('name',['Moderator'])->get();
+            return view('dashboard.role.index',$this->data, compact('roles'));
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
+        return back();
     }
     public function AddRole(Request $request)
     {
-         $request->validate([
-             'name'=>['required','string','unique:roles','max:255']
-         ]);
-         $role = Role::create(['guard_name' => 'web','name' => ucwords($request->name)]);
-         if ($role){
-             toast('Role created','success');
-         }  else{
-             toast('Error','error');
-         }
-         return back();
+        if (auth()->user()->can(Permissions::CAN_CREATE_ROLE)){
+            $request->validate([
+                'name'=>['required','string','unique:roles','max:255']
+            ]);
+            $role = Role::create(['guard_name' => 'web','name' => ucwords($request->name)]);
+            if ($role){
+                toast('Role created','success');
+            }  else{
+                toast('Error','error');
+            }
+            return back();
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
+        return back();
+
     }
     public function UpdateRole(Request $request, int $id)
     {
-        $request->validate([
-            'name'=>['required','string','unique:roles','max:255']
-        ]);
-        $role = Role::findById($id);
-        $response = $role->update(['name' => $request->name]);
-        if ($response){
-            toast('Success','success');
-        }  else{
-            toast('Error','error');
+        if (auth()->user()->can(Permissions::CAN_UPDATE_ROLE)){
+            $request->validate([
+                'name'=>['required','string','unique:roles','max:255']
+            ]);
+            $role = Role::findById($id);
+            $response = $role->update(['name' => $request->name]);
+            if ($response){
+                toast('Success','success');
+            }  else{
+                toast('Error','error');
+            }
+            return back();
         }
+        Alert::warning('Error','You don"t have sufficient privilege');
         return back();
     }
     public function DeleteRole(Request $request)
     {
-        $roleId = $request->id;
-        $role = Role::findById($roleId);
-        $role->delete();
-        toast('Deleted','success');
+        if (auth()->user()->can(Permissions::CAN_DELETE_ROLE)){
+            $roleId = $request->id;
+            $role = Role::findById($roleId);
+            $role->delete();
+            toast('Deleted','success');
+            return back();
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
         return back();
     }
     public function role(string $name)
     {
-        $role = Role::findByName($name);
-        //Get all file permissions
-        $allPermissions = Cache::remember(CacheKeys::PERMISSIONS_CACHE, now()->addDays(30), function (){
-             return Permission::pluck('name');
-        });
+        if (Auth::user()->can(Permissions::CAN_READ_ROLES)){
+            $role = Role::findByName($name);
+            //Get all file permissions
+            $allPermissions = Cache::remember(CacheKeys::PERMISSIONS_CACHE, now()->addDays(30), function (){
+                return Permission::pluck('name');
+            });
 
-        //return only the permissions that this role does not have
-        $permissions = $allPermissions->filter(function ($item) use ($role){
-            return $role->permissions->pluck('name')->doesntContain($item);
-        }) ;
+            //return only the permissions that this role does not have
+            $permissions = $allPermissions->filter(function ($item) use ($role){
+                return $role->permissions->pluck('name')->doesntContain($item);
+            }) ;
 
-        $this->data['title'] = "Module Access";
-        $this->data['titleText'] = "Set/View Permissions";
-        return view('dashboard.role.role',$this->data, compact('role', 'permissions'));
+            $this->data['title'] = "Module Access";
+            $this->data['titleText'] = "Set/View Permissions";
+            return view('dashboard.role.role',$this->data, compact('role', 'permissions'));
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
+        return back();
     }
     public function AssignPermission(Request $request, String $role)
     {
-        $request->validate([
-            'permission'=>['required']
-        ]);
-        $Role = Role::findByName($role);
-        $Role->givePermissionTo($request->permission);
-        toast('New permissions added to '. $role, 'success');
+        if (Auth::user()->can(Permissions::CAN_UPDATE_ROLE)){
+            $request->validate([
+                'permission'=>['required']
+            ]);
+            $Role = Role::findByName($role);
+            $Role->givePermissionTo($request->permission);
+            toast('New permissions added to '. $role, 'success');
+            return back();
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
         return back();
     }
     public function RevokePermission(Request $request, string $roleName)
     {
-        //dd($request->all());
-        $permission = Permission::findByName($request->permission);
-        $role = Role::findByName($roleName);
-        if($role->hasPermissionTo($permission)){
-            $role->revokePermissionTo($permission);
-            toast('Permission revoked','success');
-        }  else{
-            toast('Error','error');
+        if (Auth::user()->can(Permissions::CAN_DELETE_ROLE)){
+            $permission = Permission::findByName($request->permission);
+            $role = Role::findByName($roleName);
+            if($role->hasPermissionTo($permission)){
+                $role->revokePermissionTo($permission);
+                toast('Permission revoked','success');
+            }  else{
+                toast('Error','error');
+            }
+            return back();
         }
+        Alert::warning('Error','You don"t have sufficient privilege');
         return back();
     }
     public function RoomFeatures()
@@ -219,56 +250,72 @@ class DashboardController extends Controller
     }
     public function AddFeature()
     {
-        $this->data['title'] = "Add Feature";
-        $this->data['titleText'] = "Add New Room Feature";
-        return view('dashboard.feature.create',$this->data);
+        if (Auth::user()->can(Permissions::CAN_CREATE_ROOM)){
+            $this->data['title'] = "Add Feature";
+            $this->data['titleText'] = "Add New Room Feature";
+            return view('dashboard.feature.create',$this->data);
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
+        return back();
     }
     public function StoreFeature(Request $request)
     {
-         $request->validate([
-             'name'=>['required','string','max:255','min:3'],
-             'icon'=>['required']
-         ]);
-         $feature = Feature::create([
-             'name' => ucwords($request['name']),
-             'icon' => $request['icon']
-         ]);
-         if ($feature){
-             toast('Feature added','success');
-         }else{
-             toast('An error occurred','error');
-         }
-         return back();
+        if (Auth::user()->can(Permissions::CAN_CREATE_ROOM)){
+            $request->validate([
+                'name'=>['required','string','max:255','min:3'],
+                'icon'=>['required']
+            ]);
+            $feature = Feature::create([
+                'name' => ucwords($request['name']),
+                'icon' => $request['icon']
+            ]);
+            if ($feature){
+                toast('Feature added','success');
+            }else{
+                toast('An error occurred','error');
+            }
+            return back();
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
+        return back();
     }
     public function UpdateRoomFeature(Request $request, int $id)
     {
-         $request->validate([
-             'name'=>['required','string','max:255','min:3'],
-             'icon'=>['nullable']
-         ]);
-        try {
-            $feature = Feature::findOrFail($id);
-           $feature->update([
-                'name' => $request['name'],
-                'icon' => $request['icon'] == null ? $feature->icon : $request['icon']
+        if (Auth::user()->can(Permissions::CAN_UPDATE_ROOM)){
+            $request->validate([
+                'name'=>['required','string','max:255','min:3'],
+                'icon'=>['nullable']
             ]);
-            toast('Updated successfully','success');
-        }  catch (ModelNotFoundException $exception){
-            Log::error($exception->getMessage());
-            toast('An error has occurred','error');
+            try {
+                $feature = Feature::findOrFail($id);
+                $feature->update([
+                    'name' => $request['name'],
+                    'icon' => $request['icon'] == null ? $feature->icon : $request['icon']
+                ]);
+                toast('Updated successfully','success');
+            }  catch (ModelNotFoundException $exception){
+                Log::error($exception->getMessage());
+                toast('An error has occurred','error');
+            }
+            return back();
         }
+        Alert::warning('Error','You don"t have sufficient privilege');
         return back();
     }
     public function DeleteRoomFeature(int $id)
     {
-        try {
-            $feature = Feature::findOrFail($id);
-            $feature->delete();
-            toast('Deleted...','success');
-        }  catch (ModelNotFoundException $exception){
-            Log::error($exception->getMessage());
-            toast('Feature not found','error');
+        if (Auth::user()->can(Permissions::CAN_DELETE_ROOM)){
+            try {
+                $feature = Feature::findOrFail($id);
+                $feature->delete();
+                toast('Deleted...','success');
+            }  catch (ModelNotFoundException $exception){
+                Log::error($exception->getMessage());
+                toast('Feature not found','error');
+            }
+            return back();
         }
+        Alert::warning('Error','You don"t have sufficient privilege');
         return back();
     }
     public function Rooms()
@@ -289,57 +336,65 @@ class DashboardController extends Controller
     }
     public function AddRoom(Request $request)
     {
-        $this->data['title'] = "New room";
-        $this->data['titleText'] = "Add a new room";
-        return view('dashboard.room.create',$this->data);
+        if (Auth::user()->can(Permissions::CAN_CREATE_ROOM)){
+            $this->data['title'] = "New room";
+            $this->data['titleText'] = "Add a new room";
+            return view('dashboard.room.create',$this->data);
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
+        return back();
     }
     public function StoreRoom(StoreRoomRequest $request)
     {
-        if (!$this->ConnectedToInternet()){
-            toast('Ooops!!!, No or weak Internet','error');
+        if (Auth::user()->can(Permissions::CAN_CREATE_ROOM)){
+            if (!$this->ConnectedToInternet()){
+                toast('Ooops!!!, No or weak Internet','error');
+                return back();
+            }
+            try {
+                DB::transaction(function () use ($request){
+                    $firstImageUrl = $this->SaveFile('rooms',1200,800,'firstImage');
+                    $secondImageUrl = $this->SaveFile('rooms',400,300,'secondImage');
+                    $thirdImageUrl = $this->SaveFile('rooms',400,300,'thirdImage');
+                    $fourthImageUrl = $this->SaveFile('rooms',400,300,'fourthImage');
+                    $fifthImageUrl = $this->SaveFile('rooms',400,300,'fifthImage');
+                    $sixthImageUrl = $this->SaveFile('rooms',400,300,'sixthImage');
+
+                    $room =  Room::create([
+                        'title'=>$request['title'],
+                        'category' => $request['category'],
+                        'extraInfo' => $request['adesc'],
+                        'description' => $request['desc'],
+                        'price' => $request['price'],
+                        'roomNumber' => $request['roomNumber'],
+                        'firstImage'=> empty($firstImageUrl) ? null : $firstImageUrl[1] ,
+                        'secondImage' => empty($secondImageUrl) ? null : $secondImageUrl[1],
+                        'thirdImage' => empty($thirdImageUrl) ? null : $thirdImageUrl[1],
+                        'fourthImage' => empty($fourthImageUrl) ? null : $fourthImageUrl[1],
+                        'fifthImage' => empty($fifthImageUrl) ? null : $fifthImageUrl[1],
+                        'sixthImage' => empty($sixthImageUrl) ? null : $sixthImageUrl[1],
+                        'f1_public_id' => empty($firstImageUrl) ? null : $firstImageUrl[0],
+                        'f2_public_id' => empty($secondImageUrl) ? null : $secondImageUrl[0],
+                        'f3_public_id' => empty($thirdImageUrl) ? null : $thirdImageUrl[0],
+                        'f4_public_id' => empty($fourthImageUrl) ? null : $fourthImageUrl[0],
+                        'f5_public_id' => empty($fifthImageUrl) ? null : $fifthImageUrl[0],
+                        'f6_public_id' => empty($sixthImageUrl) ? null : $sixthImageUrl[0],
+                    ]);
+                    if (!$room){
+                        throw new \Exception('Room not created');
+                    }
+                    $room->update([
+                        'slug'=>Str::slug($room->title).'-'.$room->id.'-'.Str::slug($room->category)
+                    ]);
+                });
+                toast('Room created','success');
+            } catch (\Exception $exception){
+                Log::error($exception->getMessage());
+                toast('Something went wrong','error');
+            }
             return back();
         }
-        try {
-            DB::transaction(function () use ($request){
-                $firstImageUrl = $this->SaveFile('rooms',1200,800,'firstImage');
-                $secondImageUrl = $this->SaveFile('rooms',400,300,'secondImage');
-                $thirdImageUrl = $this->SaveFile('rooms',400,300,'thirdImage');
-                $fourthImageUrl = $this->SaveFile('rooms',400,300,'fourthImage');
-                $fifthImageUrl = $this->SaveFile('rooms',400,300,'fifthImage');
-                $sixthImageUrl = $this->SaveFile('rooms',400,300,'sixthImage');
-
-                $room =  Room::create([
-                    'title'=>$request['title'],
-                    'category' => $request['category'],
-                    'extraInfo' => $request['adesc'],
-                    'description' => $request['desc'],
-                    'price' => $request['price'],
-                    'roomNumber' => $request['roomNumber'],
-                    'firstImage'=> empty($firstImageUrl) ? null : $firstImageUrl[1] ,
-                    'secondImage' => empty($secondImageUrl) ? null : $secondImageUrl[1],
-                    'thirdImage' => empty($thirdImageUrl) ? null : $thirdImageUrl[1],
-                    'fourthImage' => empty($fourthImageUrl) ? null : $fourthImageUrl[1],
-                    'fifthImage' => empty($fifthImageUrl) ? null : $fifthImageUrl[1],
-                    'sixthImage' => empty($sixthImageUrl) ? null : $sixthImageUrl[1],
-                    'f1_public_id' => empty($firstImageUrl) ? null : $firstImageUrl[0],
-                    'f2_public_id' => empty($secondImageUrl) ? null : $secondImageUrl[0],
-                    'f3_public_id' => empty($thirdImageUrl) ? null : $thirdImageUrl[0],
-                    'f4_public_id' => empty($fourthImageUrl) ? null : $fourthImageUrl[0],
-                    'f5_public_id' => empty($fifthImageUrl) ? null : $fifthImageUrl[0],
-                    'f6_public_id' => empty($sixthImageUrl) ? null : $sixthImageUrl[0],
-                ]);
-                if (!$room){
-                    throw new \Exception('Room not created');
-                }
-                $room->update([
-                    'slug'=>Str::slug($room->title).'-'.$room->id.'-'.Str::slug($room->category)
-                ]);
-            });
-            toast('Room created','success');
-        } catch (\Exception $exception){
-            Log::error($exception->getMessage());
-            toast('Something went wrong','error');
-        }
+        Alert::warning('Error','You don"t have sufficient privilege');
         return back();
     }
     public function Room(string $slug)
@@ -351,85 +406,97 @@ class DashboardController extends Controller
     }
     public function EditRoom(string $slug)
     {
-        $room = Room::where('slug',$slug)->first();
-        $this->data['title'] = (string)$room->title;
-        $this->data['titleText'] = "Edit Single room";
-        return view('dashboard.room.edit',$this->data,compact('room'));
+        if (Auth::user()->can(Permissions::CAN_UPDATE_ROOM)){
+            $room = Room::where('slug',$slug)->first();
+            $this->data['title'] = (string)$room->title;
+            $this->data['titleText'] = "Edit Single room";
+            return view('dashboard.room.edit',$this->data,compact('room'));
+        }
+        Alert::warning('Error','You don"t have sufficient privilege');
+        return back();
     }
     public function UpdateRoom(UpdateRoomRequest $request, string $slug)
     {
-        if (!$this->ConnectedToInternet()){
-             toast('Ooops!!!, No or weak Internet','error');
-             return back();
-        }
-        try {
-            $room = Room::where('slug',$slug)->firstOrFail();
+        if (Auth::user()->can(Permissions::CAN_UPDATE_ROOM)){
+            if (!$this->ConnectedToInternet()){
+                toast('Ooops!!!, No or weak Internet','error');
+                return back();
+            }
+            try {
+                $room = Room::where('slug',$slug)->firstOrFail();
 
-            DB::transaction(function () use ($room, $request) {
-                $firstImageResponse = $this->CheckImageWasUploaded('firstImage',$room['f1_public_id'],'rooms',1200,800);
-                $secondImageResponse = $this->CheckImageWasUploaded('secondImage',$room['f2_public_id'],'rooms',400,300);
-                $thirdImageResponse = $this->CheckImageWasUploaded('thirdImage',$room['f3_public_id'],'rooms',400,300);
-                $fourthImageResponse = $this->CheckImageWasUploaded('fourthImage',$room['f4_public_id'],'rooms',400,300);
-                $fifthImageResponse = $this->CheckImageWasUploaded('fifthImage',$room['f5_public_id'],'rooms',400,300);
-                $sixthImageResponse = $this->CheckImageWasUploaded('sixthImage',$room['f6_public_id'],'rooms',400,300);
+                DB::transaction(function () use ($room, $request) {
+                    $firstImageResponse = $this->CheckImageWasUploaded('firstImage',$room['f1_public_id'],'rooms',1200,800);
+                    $secondImageResponse = $this->CheckImageWasUploaded('secondImage',$room['f2_public_id'],'rooms',400,300);
+                    $thirdImageResponse = $this->CheckImageWasUploaded('thirdImage',$room['f3_public_id'],'rooms',400,300);
+                    $fourthImageResponse = $this->CheckImageWasUploaded('fourthImage',$room['f4_public_id'],'rooms',400,300);
+                    $fifthImageResponse = $this->CheckImageWasUploaded('fifthImage',$room['f5_public_id'],'rooms',400,300);
+                    $sixthImageResponse = $this->CheckImageWasUploaded('sixthImage',$room['f6_public_id'],'rooms',400,300);
 
-                $updateResponse = $room->update([
-                    'title'=>$request['title'],
-                    'category' => $request['category'],
-                    'extraInfo' => $request['adesc'],
-                    'description' => $request['desc'],
-                    'price' => $request['price'],
-                    'roomNumber' => $request['roomNumber'],
-                    'firstImage'=> $firstImageResponse !== null ?  $firstImageResponse[1] : $room['firstImage'] ,
-                    'secondImage' => $secondImageResponse !== null ? $secondImageResponse[1] : $room['secondImage'] ,
-                    'thirdImage' => $thirdImageResponse !== null ? $thirdImageResponse[1] : $room['thirdImage'] ,
-                    'fourthImage' => $fourthImageResponse !== null ? $fourthImageResponse[1] : $room['fourthImage'] ,
-                    'fifthImage' => $fifthImageResponse !== null ? $fifthImageResponse[1] : $room['fifthImage'] ,
-                    'sixthImage' => $sixthImageResponse !== null ? $sixthImageResponse[1] : $room['sixthImage'] ,
-                    'f1_public_id' => $firstImageResponse !== null ? $firstImageResponse[0] : $room['f1_public_id'] ,
-                    'f2_public_id' => $secondImageResponse !== null ? $secondImageResponse[0] : $room['f2_public_id'] ,
-                    'f3_public_id' => $thirdImageResponse !== null ? $thirdImageResponse[0] : $room['f3_public_id'] ,
-                    'f4_public_id' => $fourthImageResponse !== null ? $fourthImageResponse[0] : $room['f4_public_id'] ,
-                    'f5_public_id' => $fifthImageResponse !== null ? $fifthImageResponse[0] : $room['f5_public_id'] ,
-                    'f6_public_id' => $sixthImageResponse !== null ? $sixthImageResponse[0] : $room['f6_public_id'] ,
-                ]);
-                $room->update([
-                    'slug'=>Str::slug($room->title).'-'.$room->id.'-'.Str::slug($room->category)
-                ]);
-                if(!$updateResponse){
-                    toast('An error occurred','error');
-                } else{
-                    toast('Successfully updated','success');
-                }
-            });
-            return redirect()->route('b-rooms');
-        }  catch (ModelNotFoundException $exception){
-            Log::error($exception->getMessage());
-            toast('Oops!!!, Not Found','error');
-            return back();
+                    $updateResponse = $room->update([
+                        'title'=>$request['title'],
+                        'category' => $request['category'],
+                        'extraInfo' => $request['adesc'],
+                        'description' => $request['desc'],
+                        'price' => $request['price'],
+                        'roomNumber' => $request['roomNumber'],
+                        'firstImage'=> $firstImageResponse !== null ?  $firstImageResponse[1] : $room['firstImage'] ,
+                        'secondImage' => $secondImageResponse !== null ? $secondImageResponse[1] : $room['secondImage'] ,
+                        'thirdImage' => $thirdImageResponse !== null ? $thirdImageResponse[1] : $room['thirdImage'] ,
+                        'fourthImage' => $fourthImageResponse !== null ? $fourthImageResponse[1] : $room['fourthImage'] ,
+                        'fifthImage' => $fifthImageResponse !== null ? $fifthImageResponse[1] : $room['fifthImage'] ,
+                        'sixthImage' => $sixthImageResponse !== null ? $sixthImageResponse[1] : $room['sixthImage'] ,
+                        'f1_public_id' => $firstImageResponse !== null ? $firstImageResponse[0] : $room['f1_public_id'] ,
+                        'f2_public_id' => $secondImageResponse !== null ? $secondImageResponse[0] : $room['f2_public_id'] ,
+                        'f3_public_id' => $thirdImageResponse !== null ? $thirdImageResponse[0] : $room['f3_public_id'] ,
+                        'f4_public_id' => $fourthImageResponse !== null ? $fourthImageResponse[0] : $room['f4_public_id'] ,
+                        'f5_public_id' => $fifthImageResponse !== null ? $fifthImageResponse[0] : $room['f5_public_id'] ,
+                        'f6_public_id' => $sixthImageResponse !== null ? $sixthImageResponse[0] : $room['f6_public_id'] ,
+                    ]);
+                    $room->update([
+                        'slug'=>Str::slug($room->title).'-'.$room->id.'-'.Str::slug($room->category)
+                    ]);
+                    if(!$updateResponse){
+                        toast('An error occurred','error');
+                    } else{
+                        toast('Successfully updated','success');
+                    }
+                });
+                return redirect()->route('b-rooms');
+            }  catch (ModelNotFoundException $exception){
+                Log::error($exception->getMessage());
+                toast('Oops!!!, Not Found','error');
+                return back();
+            }
         }
+        Alert::warning('Error','You don"t have sufficient privilege');
+        return back();
     }
 
     public function DeleteRoom(int $id)
     {
-        if ($this->ConnectedToInternet()){
-            try {
-                $room = Room::where('id',$id)->firstOrFail();
-                //delete the images if any
-                $arr = ['f1_public_image','f2_public_image','f3_public_image','f4_public_image','f5_public_image','f6_public_image'];
-                for ($i = 1; $i < 6; $i++){
-                    $this->DeleteFile($room[$arr[$i]]);
+        if (Auth::user()->can(Permissions::CAN_DELETE_ROOM)){
+            if ($this->ConnectedToInternet()){
+                try {
+                    $room = Room::where('id',$id)->firstOrFail();
+                    //delete the images if any
+                    $arr = ['f1_public_image','f2_public_image','f3_public_image','f4_public_image','f5_public_image','f6_public_image'];
+                    for ($i = 1; $i < 6; $i++){
+                        $this->DeleteFile($room[$arr[$i]]);
+                    }
+                    //delete the room model
+                    $room->delete();
+                    toast('Success','success');
+                } catch (ModelNotFoundException $exception){
+                    Log::error($exception->getMessage());
+                    toast('An error occurred','error');
                 }
-                //delete the room model
-                $room->delete();
-                toast('Success','success');
-            } catch (ModelNotFoundException $exception){
-                Log::error($exception->getMessage());
-                toast('An error occurred','error');
+            }  else{
+                toast('Weak or no internet','error');
             }
-        }  else{
-            toast('Weak or no internet','error');
+            return back();
         }
+        Alert::warning('Error','You don"t have sufficient privilege');
         return back();
     }
     public function Faq()
@@ -462,6 +529,12 @@ class DashboardController extends Controller
         $this->data['titleText'] = $post->title;
         $this->data['post'] = $post;
         return view('dashboard.blog.single-post',$this->data);
+    }
+    public function Employee()
+    {
+        $this->data['title'] = 'Staff';
+        $this->data['titleText'] ='Staff' ;
+        return view('dashboard.employee.index',$this->data);
     }
 
 }

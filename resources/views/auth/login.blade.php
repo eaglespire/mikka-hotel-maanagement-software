@@ -14,7 +14,9 @@
                 </div>
 
                 <div class="p-3">
-                    <h4 class="font-18 m-b-5 text-center">Welcome Back {{ authenticate_user_ip()?->fullname }}!</h4>
+                    @if(!empty(authenticate_user_ip()))
+                        <h4 class="font-18 m-b-5 text-center">Welcome Back {{ authenticate_user_ip()->fullname }}!</h4>
+                    @endif
                     <p class="text-muted text-center">Sign in to continue to {{ config('app.name') }}.</p>
 
                     <form class="form-horizontal m-t-30" action="{{ route('login') }}" method="post">

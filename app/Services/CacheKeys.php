@@ -5,6 +5,7 @@ namespace App\Services;
 class CacheKeys
 {
     public const EVENT_CACHE = 'eventCache';
+    public const ROLE_CACHE = 'roleCache';
     public const PERMISSIONS_CACHE = 'permissionsCache';
     public const FEATURE_CACHE = 'featureCache';
     public const ROOM_CACHE = 'roomCache';

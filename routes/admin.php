@@ -3,10 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventsController;
 use App\Http\Controllers\Admin\ManagePageController;
-use App\Http\Controllers\Admin\RoomController;
-use App\Http\Controllers\Admin\WebHookController;
 use App\Http\Controllers\SettingsController;
-use App\Http\Livewire\Dashboard\PermissionsComponent;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(DashboardController::class)
@@ -40,6 +37,7 @@ Route::controller(DashboardController::class)
     Route::get('posts','Posts')->name('posts');
     Route::get('category','PostCategory')->name('post-category');
     Route::get('post/{post:slug}','Post')->name('post');
+    Route::get('employees','Employee')->name('employee');
 });
 Route::controller(EventsController::class)
     ->prefix('event')
@@ -57,31 +55,5 @@ Route::controller(ManagePageController::class)->group(function (){
     Route::get('about','AboutPage')->name('about-page');
 });
 
-
-
-
-
-
-
-//Route::controller(DashboardControllerOld::class)->group(function (){
-//    Route::get('/','indexPage')->name('dashboard');
-//    Route::get('staff','staffListPage')->name('staff-list-page');
-//    Route::get('staff/create','createStaffPage')->name('create-staff')->middleware('can:add-new-staff');
-//    Route::post('staff/create','storeStaff')->name('store-staff');
-//    Route::get('staff/{id}/edit','editStaffPage')->name('edit-staff-page');
-//    Route::put('staff/{id}/update','updateStaff')->name('update-staff');
-//    Route::prefix('settings')->group(function (){
-//        Route::get('theme','themeSettingsPage')->name('theme-settings-page');
-//        Route::get('roles','roleSettingsPage')->name('role-settings-page');
-//    });
-//});
-//Route::get('roles/{role:name}/permissions', PermissionsComponent::class)->name('permissions-component');
-//Route::get('room',[RoomController::class,'index'])->name('room.index');
-//Route::get('room/create',[RoomController::class,'createRoom'])->name('room.create');
-//Route::post('room/store',[RoomController::class,'storeRoom'])->name('room.store');
-//Route::get('room/{room:slug}', [RoomController::class,'manageRoom'])->name('room.manage-room');
-//Route::get('features', [ RoomController::class,'allFeatures' ])->name('feature.index');
-//Route::get('features/create', [ RoomController::class,'newFeature' ])->name('feature.create') ;
-//Route::post('features', [ RoomController::class,'storeFeature' ])->name('feature.store') ;
 
 

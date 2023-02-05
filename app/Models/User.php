@@ -54,6 +54,15 @@ class User extends Authenticatable
     {
         return $this->attributes['firstname']." ". $this->attributes['lastname'];
     }
+    public function UserRole()
+    {
+        return $this->roles->pluck('name')->first();
+    }
+    public function UserRoleId()
+    {
+        return $this->roles->pluck('id')->first();
+    }
+
 
     public function scopeSearch($query, $term)
     {

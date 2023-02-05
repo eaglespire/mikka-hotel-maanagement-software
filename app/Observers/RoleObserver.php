@@ -1,26 +1,12 @@
 <?php
 
 namespace App\Observers;
+use App\Services\CacheKeys;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 
 class RoleObserver
 {
-    private string $cacheKey = "roleCache";
-    private function buildCache(): void
-    {
-        Cache::remember($this->cacheKey, now()->addDays(30), function () {
-            return Role::where('id', '>', 1)->get();
-        });
-    }
-    private function clearCache(): void
-    {
-        if (Cache::has($this->cacheKey))
-        {
-            Cache::forget($this->cacheKey);
-        }
-
-    }
     /**
      * Handle the Role "created" event.
      *
@@ -29,8 +15,9 @@ class RoleObserver
      */
     public function created(Role $role)
     {
-        $this->clearCache();
-        $this->buildCache();
+        if (Cache::has(CacheKeys::ROLE_CACHE)){
+            Cache::forget(CacheKeys::ROLE_CACHE);
+        }
     }
 
     /**
@@ -41,8 +28,9 @@ class RoleObserver
      */
     public function updated(Role $role)
     {
-        $this->clearCache();
-        $this->buildCache();
+        if (Cache::has(CacheKeys::ROLE_CACHE)){
+            Cache::forget(CacheKeys::ROLE_CACHE);
+        }
     }
 
     /**
@@ -53,8 +41,9 @@ class RoleObserver
      */
     public function deleted(Role $role)
     {
-        $this->clearCache();
-        $this->buildCache();
+        if (Cache::has(CacheKeys::ROLE_CACHE)){
+            Cache::forget(CacheKeys::ROLE_CACHE);
+        }
     }
 
     /**

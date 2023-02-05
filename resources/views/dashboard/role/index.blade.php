@@ -30,18 +30,19 @@
                             <tr>
                                 <th scope="row">{{ $loop->iteration }}</th>
                                 <td>{{ $role->name }}</td>
-                                <td>2</td>
+                                <td>{{ specific_role_users_count($role['id']) }}</td>
                                 <td>
-                                    <a data-toggle="modal" data-target="#editRole_{{ $role->id }}" href="#" class="btn btn-primary">
-                                        Edit
-                                    </a>
-                                    <a href="{{ route('b-role',$role->name) }}" class="btn btn-primary">
-                                        Permissions
-                                    </a>
-                                    <a href="" class="btn btn-danger" data-toggle="modal" data-target="#removeRole_{{ $role->id }}">
-                                        Delete
-                                    </a>
-
+                                    <div class="d-flex">
+                                        <a data-toggle="modal" data-target="#editRole_{{ $role->id }}" href="#" class="btn btn-primary mr-1">
+                                            Edit
+                                        </a>
+                                        <a href="{{ route('b-role',$role->name) }}" class="btn btn-primary mr-1">
+                                            Permissions
+                                        </a>
+                                        <a href="" class="btn btn-danger" data-toggle="modal" data-target="#removeRole_{{ $role->id }}">
+                                            Delete
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

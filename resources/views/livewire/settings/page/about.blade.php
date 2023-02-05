@@ -1,6 +1,7 @@
 <div class="row" wire:key="pages-about-{{ Str::random() }}">
     <div class="col-12">
-        <div class="d-flex justify-content-end mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6>{{__("About Page Settings")}}</h6>
             <a href="{{ url()->previous() }}" class="btn btn-secondary">
                 <i class="ti-angle-left"></i> Back
             </a>

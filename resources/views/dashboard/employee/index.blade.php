@@ -1,4 +1,5 @@
 @extends('layouts.backEnd')
+
 @section('content')
-    Theme Settings
+    @livewire('modules.employee')
 @endsection

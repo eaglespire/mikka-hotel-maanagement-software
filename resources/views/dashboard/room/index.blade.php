@@ -9,10 +9,12 @@
         <div class="col">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-flex m-b-30 justify-content-between align-items-center">
-                        <h4 class="mt-0 header-title">All Rooms</h4>
-                        <x-top-right-btn :route="$routeName" title="Add new room" icon="right" />
-                    </div>
+                    @can(\App\Services\Permissions::CAN_CREATE_ROOM)
+                        <div class="d-flex m-b-30 justify-content-between align-items-center">
+                            <h4 class="mt-0 header-title">All Rooms</h4>
+                            <x-top-right-btn :route="$routeName" title="Add new room" icon="right" />
+                        </div>
+                    @endcan
                     <div class="table-responsive">
                         <table class="table table-sm m-0">
                             <thead>
@@ -43,12 +45,16 @@
                                                 <a href="{{ route('b-room',$room['slug']) }}" class="btn btn-primary mr-1">
                                                     <i class="fas fa-eye"></i> view
                                                 </a>
-                                                <a href="{{ route('b-edit-room',$room['slug']) }}" class="btn btn-warning mr-1">
-                                                    <i class="fas fa-edit"></i> edit
-                                                </a>
-                                                <a href="" class="btn btn-danger" data-toggle="modal" data-target="#removeRoom_{{ $room['id'] }}">
-                                                    <i class="fas fa-trash-alt"></i> delete
-                                                </a>
+                                                @can(\App\Services\Permissions::CAN_UPDATE_ROOM)
+                                                    <a href="{{ route('b-edit-room',$room['slug']) }}" class="btn btn-warning mr-1">
+                                                        <i class="fas fa-edit"></i> edit
+                                                    </a>
+                                                @endcan
+                                                @can(\App\Services\Permissions::CAN_DELETE_ROOM)
+                                                    <a href="" class="btn btn-danger" data-toggle="modal" data-target="#removeRoom_{{ $room['id'] }}">
+                                                        <i class="fas fa-trash-alt"></i> delete
+                                                    </a>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach

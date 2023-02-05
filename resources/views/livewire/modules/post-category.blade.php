@@ -19,19 +19,18 @@
         </form>
     </x-blog-category>
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h4 class="mt-0 header-title">All categories</h4>
-                <p class="text-muted m-b-30"> Add new category update and remove categories </p>
+        <div class="d-flex justify-content-between my-2 align-items-center">
+            <div class="d-flex align-items-center">
+                <h4 class="header-title mr-2">All Categories</h4>
+                @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                    <button class="btn btn-primary" wire:click.prevent="OpenCreateModal">
+                        <i class="ion ion-md-create "></i>  Create
+                    </button>
+                @endcan
             </div>
-            <div class="">
-                <button class="btn btn-secondary">
-                    <i class="typcn typcn-chevron-left "></i> Back
-                </button>
-                <button class="btn btn-primary" wire:click.prevent="OpenCreateModal">
-                    <i class="typcn typcn-plus "></i>  New category
-                </button>
-            </div>
+            <a href="{{ url()->previous() }}" class="btn btn-primary">
+                <i class="typcn typcn-chevron-left"></i> Back
+            </a>
         </div>
 
         <div wire:loading.inline wire:target="DeleteCategory">
@@ -43,7 +42,9 @@
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Action</th>
+                    @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                        <th>Action</th>
+                    @endcan
                 </tr>
                 </thead>
                 <tbody>
@@ -54,13 +55,17 @@
                                 <td>{{ $category['name'] }}</td>
                                 <td>
                                     <div class="d-flex">
-                                        <a wire:click.prevent="LaunchEditModal({{ $category['id'] }},'{{ $category['name'] }}')" href="" class="btn
+                                        @can(\App\Services\Permissions::CAN_UPDATE_BLOG_POST)
+                                            <a wire:click.prevent="LaunchEditModal({{ $category['id'] }},'{{ $category['name'] }}')" href="" class="btn
                                         btn-secondary">
-                                            <i class="typcn typcn-edit "></i> edit
-                                        </a>
-                                        <a wire:click.prevent="DeleteCategory({{ $category['id'] }})" href="" class="btn btn-danger mx-2">
-                                            <i class="typcn typcn-trash "></i> trash
-                                        </a>
+                                                <i class="typcn typcn-edit "></i> edit
+                                            </a>
+                                        @endcan
+                                      @can(\App\Services\Permissions::CAN_DELETE_BLOG_POST)
+                                            <a wire:click.prevent="DeleteCategory({{ $category['id'] }})" href="" class="btn btn-danger mx-2">
+                                                <i class="typcn typcn-trash "></i> trash
+                                            </a>
+                                      @endcan
                                     </div>
                                 </td>
                             </tr>

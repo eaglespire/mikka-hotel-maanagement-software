@@ -4,8 +4,11 @@
     <div class="row">
         <div class="col">
             <div class="card card-body">
-                <div class="d-flex justify-content-end mb-2">
-                    <a href="{{ route('b-add-feature') }}" class="btn btn-primary">Add new feature</a>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5>All Features</h5>
+                    @can(\App\Services\Permissions::CAN_CREATE_ROOM)
+                        <a href="{{ route('b-add-feature') }}" class="btn btn-primary">Add new feature</a>
+                    @endcan
                 </div>
                 @if(count($features) !== 0)
                     <div class="table-responsive">
@@ -16,7 +19,9 @@
                                 <th>Name</th>
                                 <th>Icon</th>
                                 <th>Image</th>
-                                <th colspan="3">Action</th>
+                                @can(\App\Services\Permissions::CAN_CREATE_ROOM)
+                                    <th colspan="3">Action</th>
+                                @endcan
                             </tr>
                             </thead>
                             <tbody>
@@ -30,17 +35,25 @@
                                             <i class="{{ $feature->icon }}"></i>
                                         </td>
                                         <td>image</td>
-                                        <td>
-                                            <a href="" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-center">
-                                                <i class="fas fa-plus-square"></i>  Add to pricing
-                                            </a>
-                                            <a data-toggle="modal" data-target="#editFeature_{{ $feature->id }}" href="" class="btn btn-info">
-                                                <i class="fas fa-edit"></i>  edit
-                                            </a>
-                                            <a data-toggle="modal" data-target="#removeFeature_{{ $feature->id }}" href="" class="btn btn-danger">
-                                                <i class="fas fa-trash-alt"></i>  delete
-                                            </a>
-                                        </td>
+                                        @can(\App\Services\Permissions::CAN_CREATE_ROOM)
+                                            <td>
+                                                <div class="d-flex">
+                                                    @can(\App\Services\Permissions::CAN_UPDATE_ROOM)
+                                                        <a data-toggle="modal" data-target="#editFeature_{{ $feature->id }}" href="" class="btn
+                                                        btn-info mr-2">
+                                                            <i class="fas fa-edit"></i>  edit
+                                                        </a>
+                                                    @endcan
+
+                                                    @can(\App\Services\Permissions::CAN_DELETE_ROOM)
+                                                        <a data-toggle="modal" data-target="#removeFeature_{{ $feature->id }}" href="" class="btn btn-danger">
+                                                            <i class="fas fa-trash-alt"></i>  delete
+                                                        </a>
+                                                    @endcan
+                                                </div>
+                                            </td>
+                                        @endcan
+
                                     </tr>
                                 @endforeach
                             </tbody>
