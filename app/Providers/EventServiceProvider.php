@@ -5,10 +5,13 @@ namespace App\Providers;
 use App\Models\About;
 use App\Models\Faq;
 use App\Models\Feature;
+use App\Models\Permission;
 use App\Models\Postcategory;
 use App\Models\Pricing;
+use App\Models\Role;
 use App\Models\Room;
 use App\Models\Setting;
+use App\Models\Tax;
 use App\Models\User;
 use App\Observers\AboutPageSettingsObserver;
 use App\Observers\EventObserver;
@@ -21,12 +24,12 @@ use App\Observers\RoleObserver;
 use App\Observers\RoomObserver;
 use App\Observers\SettingObserver;
 use App\Observers\StaffObserver;
+use App\Observers\TaxObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -59,6 +62,7 @@ class EventServiceProvider extends ServiceProvider
         Faq::observe(FaqObserver::class);
         Pricing::observe(PricingObserver::class);
         Postcategory::observe(PostCategoryObserver::class);
+        Tax::observe(TaxObserver::class);
     }
 
     /**

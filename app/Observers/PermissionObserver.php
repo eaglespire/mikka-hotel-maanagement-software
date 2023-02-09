@@ -1,25 +1,15 @@
 <?php
 
 namespace App\Observers;
+use App\Models\Permission;
 use App\Services\CacheKeys;
 use Illuminate\Support\Facades\Cache;
-use Spatie\Permission\Models\Permission;
+
 
 class PermissionObserver
 {
-    private function clearCache(): void
-    {
-        if (Cache::has(CacheKeys::PERMISSIONS_CACHE))
-        {
-            Cache::forget(CacheKeys::PERMISSIONS_CACHE);
-        }
-    }
-    private function buildCache(): void
-    {
-        Cache::remember(CacheKeys::PERMISSIONS_CACHE,now()->addDays(30),function (){
-            return Permission::get();
-        });
-    }
+
+
     /**
      * Handle the Permission "created" event.
      *
@@ -28,8 +18,10 @@ class PermissionObserver
      */
     public function created(Permission $permission)
     {
-        $this->clearCache();
-        $this->buildCache();
+        if (Cache::has(CacheKeys::PERMISSIONS_CACHE))
+        {
+            Cache::forget(CacheKeys::PERMISSIONS_CACHE);
+        }
     }
 
     /**
@@ -40,8 +32,10 @@ class PermissionObserver
      */
     public function updated(Permission $permission)
     {
-        $this->clearCache();
-        $this->buildCache();
+        if (Cache::has(CacheKeys::PERMISSIONS_CACHE))
+        {
+            Cache::forget(CacheKeys::PERMISSIONS_CACHE);
+        }
     }
 
     /**
@@ -52,8 +46,10 @@ class PermissionObserver
      */
     public function deleted(Permission $permission)
     {
-        $this->clearCache();
-        $this->buildCache();
+        if (Cache::has(CacheKeys::PERMISSIONS_CACHE))
+        {
+            Cache::forget(CacheKeys::PERMISSIONS_CACHE);
+        }
     }
 
     /**
@@ -64,8 +60,7 @@ class PermissionObserver
      */
     public function restored(Permission $permission)
     {
-        $this->clearCache();
-        $this->buildCache();
+
     }
 
     /**
@@ -76,7 +71,6 @@ class PermissionObserver
      */
     public function forceDeleted(Permission $permission)
     {
-        $this->clearCache();
-        $this->buildCache();
+
     }
 }

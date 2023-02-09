@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Spatie\Permission\Models\Role;
+
 
 class Employee extends Component
 {

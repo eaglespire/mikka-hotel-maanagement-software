@@ -4,7 +4,7 @@ namespace App\Http\Livewire\Dashboard;
 
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
-use Spatie\Permission\Models\Role;
+//use Spatie\Permission\Models\Role;
 
 class RolesComponent extends Component
 {

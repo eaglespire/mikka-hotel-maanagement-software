@@ -1,10 +1,21 @@
 <div wire:key="settings-{{ Str::random() }}">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h6>{{__("Settings")}}</h6>
-        <a href="{{ url()->previous() }}" class="btn btn-secondary">
-            <i class="ti-angle-left"></i> Back
-        </a>
+    <div class="d-flex justify-content-between mb-2">
+        <h4 class="header-title">{{__("General Settings")}}</h4>
+        <div class="d-flex align-items-center">
+            <button wire:click="ToggleDropDown" class="btn btn-primary d-flex align-items-center mr-2">
+                <i style="font-size: 20px" class="mdi mdi-arrow-down-drop-circle mr-1"></i> <span>{{ __("Manage Settings") }}</span>
+            </button>
+            <a href="{{ url()->previous() }}" class="btn btn-primary">
+                <i style="font-size: 20px" class="typcn typcn-chevron-left"></i> Back
+            </a>
+        </div>
     </div>
+    <x-settings-dropdown>
+        <a href="{{ route('b-contact-settings') }}">Contact Settings</a>
+        <a href="{{ route('b-social-media-settings') }}">Social Media Settings</a>
+        <a href="{{ route('b-upload-settings') }}">Uploads</a>
+        <a href="{{ route('b-salary-settings') }}">Tax Settings</a>
+    </x-settings-dropdown>
     <div class="card card-body" wire:key="general-settings-162647ghfgd">
 
         <p class="text-muted m-b-30">General Settings</p>

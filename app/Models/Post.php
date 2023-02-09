@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
+    protected $with = ['postcategory'];
     protected $fillable = [
         'title','body','reads','tags','author',
         'postcategory_id','published','slug','image_1','image_2','image_3','image_4','image_5'];

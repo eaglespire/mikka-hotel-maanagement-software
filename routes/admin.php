@@ -25,7 +25,7 @@ Route::controller(DashboardController::class)
     Route::post('features','StoreFeature')->name('store-feature');
     Route::put('features/{id}/update','UpdateRoomFeature')->name('update-room-feature');
     Route::delete('features/{id}','DeleteRoomFeature')->name('delete-room-feature');
-    Route::get('rooms','Rooms')->name('rooms');
+    //Route::get('rooms','Rooms')->name('rooms');
     Route::get('rooms/create','AddRoom')->name('add-room');
     Route::post('rooms','StoreRoom')->name('store-room');
     Route::get('rooms/{room:slug}','Room')->name('room');
@@ -49,6 +49,10 @@ Route::controller(EventsController::class)
 
 Route::controller(SettingsController::class)->prefix('settings')->group(function (){
     Route::get('/','index')->name('settings.index');
+    Route::get('contact','ContactSettings')->name('contact-settings');
+    Route::get('social-media','SocialMediaSettings')->name('social-media-settings');
+    Route::get('uploads','UploadSettings')->name('upload-settings');
+    Route::get('salary','SalarySettings')->name('salary-settings');
 });
 
 Route::controller(ManagePageController::class)->group(function (){

@@ -10,23 +10,28 @@ use App\Models\Post;
 use App\Models\Room;
 use App\Services\CacheKeys;
 use App\Services\Constant;
+use App\Services\FullPageCache;
 use App\Services\Permissions;
 use App\Traits\CloudinaryFileServer;
 use App\Traits\CustomPagination;
 use App\Traits\HasInternet;
 use App\Traits\UserImage;
+use http\Client\Response;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+
 
 class DashboardController extends Controller
 {
@@ -127,18 +132,16 @@ class DashboardController extends Controller
             return back();
         }
     }
+
+    /**
+     * @throws AuthorizationException
+     */
     public function Roles()
     {
-        if (auth()->user()->can(Permissions::CAN_READ_ROLES)){
-            $this->data['title'] = "User roles";
-            $this->data['titleText'] = "Available user roles";
-
-            //fetch all the roles except the super admin role
-            $roles = Role::whereNotIn('name',['Moderator'])->get();
-            return view('dashboard.role.index',$this->data, compact('roles'));
-        }
-        Alert::warning('Error','You don"t have sufficient privilege');
-        return back();
+        $this->authorize(Permissions::CAN_ACCESS_ROLES);
+        $this->data['title'] = "User roles";
+        $this->data['titleText'] = "User roles";
+        return view('dashboard.role.index',$this->data);
     }
     public function AddRole(Request $request)
     {
@@ -320,19 +323,26 @@ class DashboardController extends Controller
     }
     public function Rooms()
     {
-        $this->data['title'] = "Rooms";
-        $this->data['titleText'] = "Available Rooms";
-        $rooms = Cache::remember(CacheKeys::ROOM_CACHE, now()->addDays(30),static function (){
-            return Room::get();
-        });
-        /*
-         * Convert the collection to a plain PHP Array
-         */
-        $arr = $rooms->toArray();
-        $items = $this->paginate($arr,20);
-        // Set  pagination path/route.
-        $items->withPath(route('b-rooms'));
-        return view('dashboard.room.index',$this->data,compact('items'));
+        if (Cache::has(FullPageCache::ROOMS_PAGE_CACHE)){
+            return Cache::get(FullPageCache::ROOMS_PAGE_CACHE);
+        }else{
+            $this->data['title'] = "Rooms";
+            $this->data['titleText'] = "Available Rooms";
+            $rooms = Cache::remember(CacheKeys::ROOM_CACHE, now()->addDays(30),static function (){
+                return Room::get();
+            });
+            /*
+             * Convert the collection to a plain PHP Array
+             */
+            $arr = $rooms->toArray();
+            $items = $this->paginate($arr,20);
+            // Set  pagination path/route.
+            $items->withPath(route('b-rooms'));
+            $cachedData = view('dashboard.room.index',$this->data,compact('items'))->render();
+            Cache::put(FullPageCache::ROOMS_PAGE_CACHE,$cachedData);
+            return $cachedData;
+        }
+
     }
     public function AddRoom(Request $request)
     {

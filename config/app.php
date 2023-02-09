@@ -179,6 +179,9 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         RealRashid\SweetAlert\SweetAlertServiceProvider::class,
         CloudinaryLabs\CloudinaryLaravel\CloudinaryServiceProvider::class,
+        \Modules\Room\Providers\RoomServiceProvider::class,
+        \Modules\Room\Providers\RouteServiceProvider::class,
+        App\Providers\PermissionsServiceProvider::class,
     ],
 
     /*

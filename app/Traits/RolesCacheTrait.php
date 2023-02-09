@@ -2,8 +2,9 @@
 
 namespace App\Traits;
 
+use App\Models\Role;
 use Illuminate\Support\Facades\Cache;
-use Spatie\Permission\Models\Role;
+
 
 trait RolesCacheTrait
 {

@@ -32,27 +32,23 @@ Route::controller(DashboardController::class)->group(function (){
 
 
 Route::get('/test', function (){
-    $data = \App\Models\User::where('id','>',1)->get();
-    //dd($data);
-    if (Cache::has('staffCache')) {
-        dd(Cache::get('staffCache'));
-    }
-
-
+    $role1 = \App\Models\Role::find(1);
+    $role2 = \App\Models\Role::find(2);
+    $user = \App\Models\User::find(1);
+   //$res = $user->roles()->sync([1,3]);
+ $res = $user->countPermissions();
+    dd($res);
 });
 Route::get('/test2', function (){
-    $date = '2022-05-22';
-    $exploded = explode('-',$date);
-    $imploded = implode("",$exploded);
-    return substr(strtolower(Str::random()).rand(0,10000),-10,10);
-    //return substr(config('app.name'),0,3);
-    //return now();
+    $user = \App\Models\User::find(1);
+    //dd($user->removeRole(3));
+    //dd($user->assignPermission(1,2,5));
+    dd($user->hasPermission('access_blog','create_blog'));
 });
 
-Route::get('/event', function (){
-    //event(new SuccessAlertNotification('My first broadcast message'));
-    alert('success','Success');
-    return true;
+Route::get('/test3', function (){
+    $role = \App\Models\Role::find(1);
+    dd($role->countPermissions());
 });
 Route::get('/listen', function (){
     alert('success','Success');

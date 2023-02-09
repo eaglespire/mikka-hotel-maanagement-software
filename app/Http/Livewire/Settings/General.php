@@ -11,7 +11,13 @@ use Livewire\Component;
 class General extends Component
 {
     use HasInternet;
-    public $siteName,$frontCopyright,$backCopyright,$header,$currency, $settings;
+    public $siteName;
+    public $frontCopyright;
+    public $backCopyright;
+    public $header;
+    public $currency;
+    public $settings;
+    public $hideDropdown = true;
     protected $rules = [
         'siteName'=>['required','string','max:255'],
         'frontCopyright'=> ['nullable','string','max:255'],
@@ -31,6 +37,10 @@ class General extends Component
             'header' => $this->settings['siteHeaderInfo'] ?? null,
             'currency' => $this->settings['currency'] ?? null
             ]);
+    }
+    public function ToggleDropDown()
+    {
+        $this->hideDropdown = !$this->hideDropdown;
     }
     public function SaveChanges()
     {

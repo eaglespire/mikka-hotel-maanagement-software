@@ -9,5 +9,7 @@ class Postcategory extends Model
 {
     use HasFactory;
 
+
+
     protected $fillable = ['name',];
 }

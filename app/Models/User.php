@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
+use App\Traits\HasRoles;
 
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+
+
 
     /**
      * The attributes that are mass assignable.
@@ -50,17 +52,11 @@ class User extends Authenticatable
         'dob'=>'date',
     ];
 
+    protected $with = ['roles','permissions'];
+
     public function getFullnameAttribute(): string
     {
         return $this->attributes['firstname']." ". $this->attributes['lastname'];
-    }
-    public function UserRole()
-    {
-        return $this->roles->pluck('name')->first();
-    }
-    public function UserRoleId()
-    {
-        return $this->roles->pluck('id')->first();
     }
 
 
@@ -71,4 +67,9 @@ class User extends Authenticatable
             ->orWhere('staff_identity','LIKE','%'.$term.'%')
             ->orWhere('email','LIKE','%'.$term.'%');
     }
+
+//    public function roles()
+//    {
+//        return $this->belongsToMany(Role::class,'role_user');
+//    }
 }

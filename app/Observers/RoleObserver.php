@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Observers;
+use App\Models\Role;
 use App\Services\CacheKeys;
 use Illuminate\Support\Facades\Cache;
-use Spatie\Permission\Models\Role;
+
 
 class RoleObserver
 {

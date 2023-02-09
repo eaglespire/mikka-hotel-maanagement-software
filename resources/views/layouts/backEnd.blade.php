@@ -140,7 +140,7 @@
                         <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                             <!-- item-->
                             <a class="dropdown-item" href="{{ route('b-profile') }}"><i class="mdi mdi-account-circle m-r-5"></i> Profile</a>
-                            @can(\App\Services\Permissions::CAN_MANAGE_SETTINGS)
+                            @can(\App\Services\Permissions::CAN_ACCESS_SETTINGS)
                                 <a class="dropdown-item d-block" href="{{ route('b-settings.index') }}">
                                     <i class="mdi mdi-settings m-r-5"></i>
                                     Settings

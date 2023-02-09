@@ -1,10 +1,11 @@
-<?php
+<?php /** @noinspection DuplicatedCode */
 
 namespace Database\Seeders;
 
+use App\Services\Permissions;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
+use App\Models\Permission;
 
 class PermissionsTableSeeder extends Seeder
 {
@@ -15,70 +16,82 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        Permission::create(['name'=>'create-booking','guard_name'=>'web']);
-        Permission::create(['name'=>'read-bookings','guard_name'=>'web']);
-        Permission::create(['name'=>'update-booking','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-booking','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_BOOKING]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_BOOKING]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_BOOKING]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_BOOKING]);
 
-        Permission::create(['name'=>'create-customer','guard_name'=>'web']);
-        Permission::create(['name'=>'read-customers','guard_name'=>'web']);
-        Permission::create(['name'=>'update-customer','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-customer','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_CUSTOMERS]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_CUSTOMERS]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_CUSTOMERS]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_CUSTOMERS]);
 
-        Permission::create(['name'=>'create-room','guard_name'=>'web']);
-        Permission::create(['name'=>'read-rooms','guard_name'=>'web']);
-        Permission::create(['name'=>'update-room','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-room','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_ROOMS]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_ROOMS]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_ROOMS]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_ROOMS]);
 
-        Permission::create(['name'=>'create-employee','guard_name'=>'web']);
-        Permission::create(['name'=>'read-employees','guard_name'=>'web']);
-        Permission::create(['name'=>'update-employee','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-employee','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_EMPLOYEES]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_EMPLOYEES]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_EMPLOYEES]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_EMPLOYEES]);
 
-        Permission::create(['name'=>'create-role','guard_name'=>'web']);
-        Permission::create(['name'=>'read-roles','guard_name'=>'web']);
-        Permission::create(['name'=>'update-role','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-role','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_ROLES]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_ROLES]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_ROLES]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_ROLES]);
 
-        Permission::create(['name'=>'create-blog-post','guard_name'=>'web']);
-        Permission::create(['name'=>'read-blog-posts','guard_name'=>'web']);
-        Permission::create(['name'=>'update-blog-post','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-blog-post','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_BLOG]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_BLOG]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_BLOG]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_BLOG]);
 
-        Permission::create(['name'=>'download-invoice','guard_name'=>'web']);
-        Permission::create(['name'=>'read-invoices','guard_name'=>'web']);
-        Permission::create(['name'=>'update-invoice','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-invoice','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_DOWNLOAD_INVOICE]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_INVOICES]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_INVOICE]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_INVOICE]);
 
-        Permission::create(['name'=>'create-expense','guard_name'=>'web']);
-        Permission::create(['name'=>'read-expenses','guard_name'=>'web']);
-        Permission::create(['name'=>'update-expense','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-expense','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_EXPENSE]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_EXPENSES]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_EXPENSE]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_EXPENSE]);
 
-        Permission::create(['name'=>'create-payroll','guard_name'=>'web']);
-        Permission::create(['name'=>'read-payrolls','guard_name'=>'web']);
-        Permission::create(['name'=>'update-payroll','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-payroll','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_PAYROLLS]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_PAYROLLS]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_PAYROLLS]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_PAYROLLS]);
 
-        Permission::create(['name'=>'create-asset','guard_name'=>'web']);
-        Permission::create(['name'=>'read-assets','guard_name'=>'web']);
-        Permission::create(['name'=>'update-asset','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-asset','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_ASSETS]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_ASSETS]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_ASSETS]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_ASSETS]);
 
-        Permission::create(['name'=>'read-activities','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-activity','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_ACTIVITIES]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_ACTIVITIES]);
 
-        Permission::create(['name'=>'create-expense-report','guard_name'=>'web']);
-        Permission::create(['name'=>'read-expense-report','guard_name'=>'web']);
-        Permission::create(['name'=>'update-expense-report','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-expense-report','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_EXPENSE_REPORT]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_EXPENSE_REPORT]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_EXPENSE_REPORT]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_EXPENSE_REPORT]);
 
-        Permission::create(['name'=>'create-invoice-report','guard_name'=>'web']);
-        Permission::create(['name'=>'read-invoice-report','guard_name'=>'web']);
-        Permission::create(['name'=>'update-invoice-report','guard_name'=>'web']);
-        Permission::create(['name'=>'delete-invoice-report','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_INVOICE_REPORT]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_INVOICE_REPORT]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_INVOICE_REPORT]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_INVOICE_REPORT]);
 
-        Permission::create(['name'=>'manage-settings','guard_name'=>'web']);
+        Permission::create(['name'=>Permissions::CAN_CREATE_EVENTS]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_EVENTS]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_EVENTS]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_EVENTS]);
+
+        Permission::create(['name'=>Permissions::CAN_CREATE_ROOM_FEATURES]);
+        Permission::create(['name'=>Permissions::CAN_ACCESS_ROOM_FEATURES]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_ROOM_FEATURES]);
+        Permission::create(['name'=>Permissions::CAN_DELETE_ROOM_FEATURES]);
+
+        Permission::create(['name'=>Permissions::CAN_ACCESS_SETTINGS]);
+        Permission::create(['name'=>Permissions::CAN_UPDATE_SETTINGS]);
+
 
     }
 }

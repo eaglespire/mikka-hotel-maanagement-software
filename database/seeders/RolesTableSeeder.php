@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 
 class RolesTableSeeder extends Seeder
 {
@@ -16,11 +16,11 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
-        Role::create(['name'=>'Moderator','guard_name'=>'web']);
-        Role::create(['name'=>'Admin','guard_name'=>'web']);
-        Role::create(['name'=>'Manager','guard_name'=>'web']);
-        Role::create(['name'=>'Receptionist','guard_name'=>'web']);
-        Role::create(['name'=>'Cleaner','guard_name'=>'web']);
+        $role1 = Role::create(['name'=>'Moderator']);
+        $role2 = Role::create(['name'=>'Admin',]);
+        $role3 = Role::create(['name'=>'Manager']);
+        $role4 = Role::create(['name'=>'Receptionist']);
+        $role5 = Role::create(['name'=>'Cleaner']);
 
         //assign roles to the users
         $user1 = User::find(1);
@@ -29,10 +29,12 @@ class RolesTableSeeder extends Seeder
         $user4 = User::find(4);
         $user5 = User::find(5);
 
-        $user1->assignRole('Moderator');
-        $user2->assignRole('Admin');
-        $user3->assignRole('Manager');
-        $user4->assignRole('Receptionist');
-        $user5->assignRole('Cleaner');
+        $user1->assignRole(1);
+        $user2->assignRole(2);
+        $user3->assignRole(3);
+        $user4->assignRole(4);
+        $user5->assignRole(5);
+
+        $role2->assignPermission(14,18,19,20);
     }
 }

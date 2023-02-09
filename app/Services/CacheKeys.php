@@ -16,4 +16,5 @@ class CacheKeys
     public const FIRST_PRICING_CACHE = 'firstPricingCache';
     public const POST_CATEGORY_CACHE = 'postCategoryCache';
     public const POST_CACHE = 'postCache';
+    public const TAX_CACHE = 'taxCache';
 }

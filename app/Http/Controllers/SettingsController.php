@@ -10,42 +10,43 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class SettingsController extends Controller
 {
+    private array $data;
+    public function __construct()
+    {
+        $this->middleware(['permission:'. Permissions::CAN_MANAGE_SETTINGS]);
+        $this->data['titleContent'] = "Hotel Management System";
+        $this->data['description'] = "";
+        $this->data['keywords'] = "";
+    }
     public function index()
     {
-        if (Auth::user()->can(Permissions::CAN_MANAGE_SETTINGS)){
-            $data['title'] = "Site Setting";
-            $data['titleText'] = "Site settings";
-            $data['titleContent'] = "Hotel Management System";
-            $data['description'] = "";
-            $data['keywords'] = "";
-            return view('settings.site.index',$data);
-        }
-        Alert::warning('Error','You don"t have sufficient privilege');
-        return back();
-
+        $this->data['title'] = "General Settings";
+        $this->data['titleText'] = "General Settings";
+        return view('settings.index',$this->data);
     }
-
-    public function create()
+    public function SocialMediaSettings()
     {
+        $this->data['title'] = "Social Media Settings";
+        $this->data['titleText'] = "Social Media Settings";
+        return view('settings.social-media',$this->data);
+    }
+    public function UploadSettings()
+    {
+        $this->data['title'] = "Upload Settings";
+        $this->data['titleText'] = "Upload Settings";
+        return view('settings.uploads', $this->data);
+    }
+    public function ContactSettings()
+    {
+        $this->data['title'] = "Contact Settings";
+        $this->data['titleText'] = "Contact settings";
+        return view('settings.contact',$this->data);
+    }
+    public function SalarySettings()
+    {
+        $this->data['title'] = "Tax Settings";
+        $this->data['titleText'] = "tax settings";
+        return view('settings.salary', $this->data);
     }
 
-    public function store(Request $request)
-    {
-    }
-
-    public function show(Setting $setting)
-    {
-    }
-
-    public function edit(Setting $setting)
-    {
-    }
-
-    public function update(Request $request, Setting $setting)
-    {
-    }
-
-    public function destroy(Setting $setting)
-    {
-    }
 }

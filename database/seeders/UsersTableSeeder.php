@@ -18,37 +18,37 @@ class UsersTableSeeder extends Seeder
         $user1 = User::create([
             'firstname'=>'John',
             'lastname'=>'Doe',
-            'email'=>'moderator@site.test',
-            'password' => \Hash::make('admin123'),
-            'password_text'=>'admin123'
+            'email'=>'mod@site.test',
+            'password' => \Hash::make('super'),
+            'password_text'=>'super'
         ]);
         $user2 = User::create([
             'firstname'=>'Richard',
             'lastname'=>'Babbage',
             'email'=>'admin@site.test',
-            'password' => \Hash::make('password'),
-            'password_text'=>'password'
+            'password' => \Hash::make('admin'),
+            'password_text'=>'admin'
         ]);
         $user3 = User::create([
             'firstname'=>'Mike',
             'lastname'=>'Novick',
             'email'=>'manager@site.test',
-            'password' => \Hash::make('password'),
-            'password_text'=>'password'
+            'password' => \Hash::make('manager'),
+            'password_text'=>'manager'
         ]);
         $user4 = User::create([
             'firstname'=>'Sarah',
             'lastname'=>'Gaines',
             'email'=>'receptionist@site.test',
-            'password' => \Hash::make('password'),
-            'password_text'=>'password'
+            'password' => \Hash::make('receptionist'),
+            'password_text'=>'receptionist'
         ]);
         $user5 = User::create([
             'firstname'=>'Jane',
             'lastname'=>'Gates',
             'email'=>'cleaner@site.test',
-            'password' => \Hash::make('password'),
-            'password_text'=>'password'
+            'password' => \Hash::make('cleaner'),
+            'password_text'=>'cleaner'
         ]);
     }
 }
