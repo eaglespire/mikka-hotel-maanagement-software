@@ -35,7 +35,7 @@ class General extends Component
             'frontCopyright' => $this->settings['frontCopyright'] ?? null,
             'backCopyright' => $this->settings['backCopyright'] ?? null,
             'header' => $this->settings['siteHeaderInfo'] ?? null,
-            'currency' => $this->settings['currency'] ?? null
+            'currency' => $this->settings['currency'] ?? "USD"
             ]);
     }
     public function ToggleDropDown()

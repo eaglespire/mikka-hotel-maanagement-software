@@ -16,7 +16,7 @@ class Payroll extends Component
     public $hidden;
     public $mode;
     public $hideModal;
-    public $staff;
+    public $user_id;
     public $amount;
     public $employees;
 
@@ -29,7 +29,7 @@ class Payroll extends Component
             $this->hidden = $hidden;
             $data = \App\Models\Payroll::find($this->hidden);
             $this->amount = $data->amount;
-            $this->staff = $data->user_id;
+            $this->user_id = $data->user_id;
             $this->modalHeader = 'Update Payroll Data';
         }
     }
@@ -37,7 +37,7 @@ class Payroll extends Component
     {
         $this->reset([
             'amount',
-            'staff',
+            'user_id',
             'modalHeader',
             'mode',
             'hidden',
@@ -57,12 +57,31 @@ class Payroll extends Component
             'mode' => 0,
             'modalHeader' => 'Add new payroll',
             'hideModal' => true,
-            'staff' => null,
+            'user_id' => $this->employees ? $this->employees[0]['id'] : null,
             'amount' => null,
         ]);
     }
+    public function Save()
+    {
+        $this->validate([
+            'amount'=>['required','min:1','numeric'],
+            'user_id' => ['required','unique:payrolls']
+        ]);
+        $response = \App\Models\Payroll::create([
+            'user_id'=>$this->user_id,
+            'amount'=>$this->amount
+        ]);
+        if ($response){
+            $this->emit('success','Data added');
+            $this->reset(['user_id','amount']);
+            $this->CloseModal();
+        }else{
+            $this->emit('fail','Something went wrong');
+        }
+    }
     public function render()
     {
-        return view('livewire.modules.payroll');
+        $data['payrolls'] = \App\Models\Payroll::paginate(10);
+        return view('livewire.modules.payroll',$data);
     }
 }

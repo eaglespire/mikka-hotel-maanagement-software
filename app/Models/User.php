@@ -15,10 +15,6 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable,HasRoles;
     protected $with = ['roles','permissions'];
 
-
-
-
-
     /**
      * The attributes that are mass assignable.
      *
@@ -55,6 +51,9 @@ class User extends Authenticatable
         'dob'=>'date',
     ];
 
-
+//    public function payroll()
+//    {
+//        return $this->hasOne(Payroll::class);
+//    }
 
 }

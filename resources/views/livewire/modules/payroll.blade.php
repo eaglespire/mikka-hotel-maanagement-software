@@ -14,12 +14,32 @@
                         <th>FullName</th>
                         <th>Staff ID</th>
                         <th>Email</th>
-                        <th>Amount</th>
+                        <th>Amount ({{ $settings ? $settings['currency'] : null }})</th>
                         <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
-
+                        @if($payrolls->total() > 0)
+                            @foreach($payrolls as $data)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $data->user->fullname }}</td>
+                                    <td>{{ $data->user->staff_identity }}</td>
+                                    <td>{{ $data->email }}</td>
+                                    <td>{{ number_format($data->amount,2) }}</td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn btn-primary mr-1">
+                                                <i class="fas fa-edit"></i> edit
+                                            </button>
+                                            <button class="btn btn-danger">
+                                                <i class="fas fa-trash-alt"></i> delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -29,7 +49,7 @@
         <form>
             <div class="form-group">
                 <label for="" class="form-label">Staff</label>
-                <select wire:model.defer="staff" id="" class="form-control @error('staff') is-invalid @enderror">
+                <select wire:model.defer="user_id" id="" class="form-control @error('user_id') is-invalid @enderror">
                     <option disabled>Please select</option>
                     @if(count($employees) !== 0)
                         @foreach($employees as $employee)
@@ -38,7 +58,7 @@
                         @endforeach
                     @endif
                 </select>
-                @error('staff')
+                @error('user_id')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
@@ -49,9 +69,9 @@
                 <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            <div wire:loading.block wire:target="" class="alert alert-primary">Processing...</div>
+            <div wire:loading.block wire:target="Save" class="alert alert-primary">Processing...</div>
             @if($mode == 0)
-                <button wire:click.prevent="" type="submit" class="btn btn-primary">
+                <button wire:click.prevent="Save" type="submit" class="btn btn-primary">
                     Save
                 </button>
             @else
