@@ -1,5 +1,5 @@
 @extends('layouts.backEnd')
 
 @section('content')
-    @livewire('modules.pricing')
+    @livewire('modules.payroll')
 @endsection

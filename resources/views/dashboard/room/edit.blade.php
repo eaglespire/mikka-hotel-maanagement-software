@@ -29,16 +29,20 @@
                             <label class="col-sm-2 col-form-label">Category</label>
                             <div class="col-sm-10">
                                 <select class="form-control @error('category') is-invalid @enderror" name="category">
-                                    <option disabled>Select</option>
-                                    <option @if($room->category == 'single') selected @endif value="single">Single</option>
-                                    <option @if($room->category == 'double') selected @endif value="double">Double</option>
-                                    <option @if($room->category == 'premium') selected @endif value="premium">Premium</option>
-                                    <option @if($room->category == 'deluxe') selected @endif value="deluxe">Deluxe</option>
+                                    @if(count($categories) !== 0)
+                                        <option disabled>Please select</option>
+                                        @foreach($categories as $category)
+                                            <option @if($room->pricing_id == $category->id) selected @endif value="{{ $category['id'] }}">
+                                                {{ $category['title'] }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
                                 @error('category')
                                 <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+
                         </div>
 
                         <div class="form-group row">
@@ -168,6 +172,17 @@
                                         @livewire('dashboard.remove-room-image', ['identifier' => $room->f6_public_id,'_id' => $room->id,'filename' => 'sixthImage','publicid' => $room->f6_public_id])
                                     </div>
                                 @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="example-number-input" class="col-sm-2 col-form-label">Publish?</label>
+                            <div class="col-sm-10">
+                                <select name="publish" id="" class="form-control">
+                                    <option disabled >Please select</option>
+                                    <option value="1">Yes,Publish</option>
+                                    <option value="0">Don't Publish</option>
+                                </select>
                             </div>
                         </div>
 

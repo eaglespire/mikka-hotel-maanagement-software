@@ -27,9 +27,9 @@ class StoreRoomRequest extends FormRequest
     {
         return [
             'title'=>['required','string','min:5','max:255'],
-            'category'=>['required','string','min:5','max:255'],
+            'category'=>['required'],
             'desc'=>['required','string','min:5'],
-            'roomNumber'=>['required','numeric','unique:rooms'],
+            'roomNumber'=>['required','numeric','unique:rooms','min:1'],
             'price'=>['required','min:1','numeric'],
             'adesc'=>['nullable'],
             'firstImage'=>['required','max:1024','mimes:png,PNG,JPG,jpeg,JPEG,svg,jpg'],

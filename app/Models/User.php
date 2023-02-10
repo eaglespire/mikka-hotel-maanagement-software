@@ -13,6 +13,9 @@ use App\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable,HasRoles;
+    protected $with = ['roles','permissions'];
+
+
 
 
 
@@ -52,24 +55,6 @@ class User extends Authenticatable
         'dob'=>'date',
     ];
 
-    protected $with = ['roles','permissions'];
-
-    public function getFullnameAttribute(): string
-    {
-        return $this->attributes['firstname']." ". $this->attributes['lastname'];
-    }
 
 
-    public function scopeSearch($query, $term)
-    {
-        return $query->where('firstname','LIKE','%'.$term.'%')
-            ->orWhere('lastname','LIKE','%'.$term.'%')
-            ->orWhere('staff_identity','LIKE','%'.$term.'%')
-            ->orWhere('email','LIKE','%'.$term.'%');
-    }
-
-//    public function roles()
-//    {
-//        return $this->belongsToMany(Role::class,'role_user');
-//    }
 }

@@ -3,13 +3,12 @@
 @section('content')
     <div class="row">
         <div class="col">
+            <x-back-button header-title="All Features">
+                @can(\App\Services\Permissions::CAN_CREATE_ROOM_FEATURES)
+                    <a href="{{ route('b-add-feature') }}" class="btn btn-primary">Add new feature</a>
+                @endcan
+            </x-back-button>
             <div class="card card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5>All Features</h5>
-                    @can(\App\Services\Permissions::CAN_CREATE_ROOM)
-                        <a href="{{ route('b-add-feature') }}" class="btn btn-primary">Add new feature</a>
-                    @endcan
-                </div>
                 @if(count($features) !== 0)
                     <div class="table-responsive">
                         <table class="table table-sm m-0">
@@ -18,8 +17,7 @@
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Icon</th>
-                                <th>Image</th>
-                                @can(\App\Services\Permissions::CAN_CREATE_ROOM)
+                                @can(\App\Services\Permissions::CAN_CREATE_ROOM_FEATURES)
                                     <th colspan="3">Action</th>
                                 @endcan
                             </tr>
@@ -34,18 +32,17 @@
                                         <td>
                                             <i class="{{ $feature->icon }}"></i>
                                         </td>
-                                        <td>image</td>
-                                        @can(\App\Services\Permissions::CAN_CREATE_ROOM)
+                                        @can(\App\Services\Permissions::CAN_CREATE_ROOM_FEATURES)
                                             <td>
                                                 <div class="d-flex">
-                                                    @can(\App\Services\Permissions::CAN_UPDATE_ROOM)
+                                                    @can(\App\Services\Permissions::CAN_UPDATE_ROOM_FEATURES)
                                                         <a data-toggle="modal" data-target="#editFeature_{{ $feature->id }}" href="" class="btn
                                                         btn-info mr-2">
                                                             <i class="fas fa-edit"></i>  edit
                                                         </a>
                                                     @endcan
 
-                                                    @can(\App\Services\Permissions::CAN_DELETE_ROOM)
+                                                    @can(\App\Services\Permissions::CAN_DELETE_ROOM_FEATURES)
                                                         <a data-toggle="modal" data-target="#removeFeature_{{ $feature->id }}" href="" class="btn btn-danger">
                                                             <i class="fas fa-trash-alt"></i>  delete
                                                         </a>

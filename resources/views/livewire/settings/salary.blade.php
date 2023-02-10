@@ -57,10 +57,12 @@
                 <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            <div wire:loading.delay wire:target="Save" class="text-primary">Processing...</div>
-
-
-            <button wire:click.prevent="@if($mode == 0) Save @else Update @endif" type="submit" class="btn btn-primary">{{ $btnText }}</button>
+            <div wire:loading.block wire:target="Save,Update" class="alert alert-primary">Processing...</div>
+            @if($mode === 0)
+                <button wire:click.prevent="Save" type="submit" class="btn btn-primary">Save</button>
+            @else
+                <button wire:click.prevent="Update" type="submit" class="btn btn-primary">Update</button>
+            @endif
         </form>
     </x-custom>
 </div>

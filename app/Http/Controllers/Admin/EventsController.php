@@ -2,30 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EventStoreRequest;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
-class EventsController extends Controller
+class EventsController extends BaseController
 {
     public function index()
     {
-        $data['title'] = "Calendar";
-        $data['titleText'] = "Check out events";
-        $data['titleContent'] = "Hotel Management System";
-        $data['description'] = "";
-        $data['keywords'] = "";
-        $appointments = Event::get();
-        $events = [];
-        foreach ($appointments as $appointment) {
-            $events[] = [
-                'title' => $appointment->name,
-                'start' => $appointment->start_time,
-                'end' => $appointment->finish_time,
-            ];
-        }
-        return view('dashboard.events',['events' => $events],$data);
+        $this->data['title'] = "Calendar";
+        $this->data['titleText'] = "Check out events";
+        return view('dashboard.events',$this->data);
     }
     public function store(EventStoreRequest $request)
     {

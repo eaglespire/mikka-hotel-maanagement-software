@@ -11,9 +11,19 @@ use Livewire\WithPagination;
 class Calendar extends Component
 {
     use WithPagination;
+
+    public $title;
+    public $start;
+    public $end;
+    public $hidden;
+    public $comment;
+    public $hideModal;
+    public $eventList;
+    public $mode;
+    public $btnText;
+    public $modalHeader;
+
     protected $paginationTheme = 'bootstrap';
-    public $title,$start,$end,$_id,$comment;
-    public $hideModal, $eventList,$mode;
 
     protected $rules = [
         'title'=>['required','string','max:20'],
@@ -22,10 +32,60 @@ class Calendar extends Component
         'comment'=>['nullable']
     ];
 
-
-    public function ToggleModal()
+    public function mount()
     {
-        $this->hideModal = !$this->hideModal;
+        $appointments = Event::get();
+        $this->eventList = [];
+        foreach ($appointments as $appointment) {
+            $this->eventList[] = [
+                'title' => $appointment->name,
+                'start' => $appointment->start_time,
+                'end' => $appointment->finish_time,
+            ];
+        }
+        $this->fill([
+            'hideModal' => true,
+            'title'=> null,
+            'hidden' => null,
+            'btnText' => 'Save',
+            'mode' => 0,
+            'modalHeader' => 'Add New event',
+            'start' => null,
+            'end' => null,
+            'comment' => null
+        ]);
+    }
+    public function OpenModal($mode = 0, $hidden = null)
+    {
+        $this->resetErrorBag();
+        $this->hideModal = false;
+        if ($mode == 1){
+            $this->hidden = $hidden;
+            $event = Event::find($this->hidden);
+            $this->title = $event['name'];
+            $this->start = $event['start_time'];
+            $this->end = $event['finish_time'];
+            $this->comment = $event['comment'];
+            $this->modalHeader ='Update';
+            $this->btnText = 'Update';
+        }
+        $this->mode = $mode;
+    }
+    public function CloseModal()
+    {
+        $this->reset([
+            'hidden',
+            'hideModal',
+            'modalHeader',
+            'mode',
+            'btnText',
+            'title',
+            'start',
+            'end',
+            'comment' ,
+            'eventList',
+        ]);
+        $this->mount();
     }
 
     public function SaveNewEvent()
@@ -39,69 +99,34 @@ class Calendar extends Component
         ]);
         if ($response){
             $this->reset(['title','start','end','comment']);
-            $this->emit('refreshCalendar');
-            $this->emit('changes-saved');
+            $this->emit('success');
             return redirect(request()->header('Referer'));
         }else{
-            $this->emit('changes-not-saved');
-        }
-
-    }
-
-    public function mount()
-    {
-        $this->fill([
-            'hideModal' => true,
-            'title' => null,
-            'comment' => null,
-            'start' => null,
-            'end' => null,
-            'mode'=> 'New Event'
-        ]);
-        $appointments = Event::get();
-        $this->eventList = [];
-        foreach ($appointments as $appointment) {
-            $this->eventList[] = [
-                'title' => $appointment->name,
-                'start' => $appointment->start_time,
-                'end' => $appointment->finish_time,
-            ];
+            $this->emit('fail');
+            return back();
         }
     }
+
+
 
     public function DeleteEvent(int $id)
     {
         try {
             $event = Event::findOrFail($id);
             $event->delete();
-            $this->emit('changes-saved');
+            $this->emit('success');
+            return redirect(request()->header('Referer'));
         } catch (ModelNotFoundException $exception){
             Log::error($exception->getMessage());
-            $this->emit('changes-not-saved');
+            $this->emit('fail');
+            return back();
         }
-        return redirect(request()->header('Referer'));
     }
 
-    public function LaunchEditModal(int $id)
-    {
-        try {
-            $event = Event::findOrFail($id);
-            $this->title = $event->name;
-            $this->start = $event->start_time;
-            $this->end = $event->finish_time;
-            $this->comment = $event->comments;
-            $this->hideModal = false;
-            $this->mode = 'Update Event';
-            $this->_id = $id;
-        } catch (ModelNotFoundException $exception){
-            Log::error($exception->getMessage());
-            $this->emit('EventNotFound');
-        }
-    }
     public function UpdateEvent()
     {
         $this->validate();
-        $event = Event::find($this->_id);
+        $event = Event::find($this->hidden);
        $response = $event->update([
             'name'=>$this->title,
             'start_time'=>$this->start,
@@ -121,6 +146,6 @@ class Calendar extends Component
     public function render()
     {
         $events = Event::simplePaginate(10);
-        return view('livewire.modules.calendar',['events' => $events]);
+        return view('livewire.modules.calendar', compact('events'));
     }
 }

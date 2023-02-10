@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between my-2 align-items-center">
             <div class="d-flex align-items-center">
                 <h4 class="header-title mr-2">All Blog</h4>
-                @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                @can(\App\Services\Permissions::CAN_CREATE_BLOG)
                     <button class="btn btn-primary" wire:click.prevent="OpenModal">
                         <i class="ion ion-md-create"></i> Create
                     </button>
@@ -21,7 +21,7 @@
                     <th>Title</th>
                     <th>Views</th>
                     <th>Category</th>
-                    @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                    @can(\App\Services\Permissions::CAN_CREATE_BLOG)
                         <th>Action</th>
                     @endcan
                 </tr>
@@ -34,13 +34,13 @@
                             <td style="cursor: pointer" onclick="window.location = '{{ route('b-post',['post' => $post]) }}'">{{ Str::limit($post->title) }}</td>
                             <td>{{ $post->reads }}</td>
                             <td>{{ $post->postcategory->name }}</td>
-                            @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                            @can(\App\Services\Permissions::CAN_CREATE_BLOG)
                                 <td>
                                     <div class="d-flex">
                                         <button wire:click.prevent="OpenModal(1,'{{ $post->id }}')" class="btn btn-secondary mr-1">
                                             <i class="dripicons-document-edit"></i> edit
                                         </button>
-                                        @can(\App\Services\Permissions::CAN_DELETE_BLOG_POST)
+                                        @can(\App\Services\Permissions::CAN_DELETE_BLOG)
                                             <button wire:click.prevent="$emit('delete',{{ $post->id }})" class="btn btn-danger mr-1">
                                                 <i class="ion ion-md-trash"></i> delete
                                             </button>

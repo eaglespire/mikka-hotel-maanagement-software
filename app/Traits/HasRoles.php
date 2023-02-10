@@ -4,10 +4,34 @@ namespace App\Traits;
 
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\RoleUser;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasRoles
 {
+    public function getFullnameAttribute(): string
+    {
+        return $this->attributes['firstname']." ". $this->attributes['lastname'];
+    }
+    public function getDobAttribute()
+    {
+        return Carbon::parse($this->attributes['dob'])->toDateString();
+    }
+    public function getJoinDateAttribute()
+    {
+        return Carbon::parse($this->attributes['join_date'])->toDateString();
+    }
+
+
+    public function scopeSearch($query, $term)
+    {
+        return $query->where('firstname','LIKE','%'.$term.'%')
+            ->orWhere('lastname','LIKE','%'.$term.'%')
+            ->orWhere('staff_identity','LIKE','%'.$term.'%')
+            ->orWhere('email','LIKE','%'.$term.'%');
+    }
+
     public function roles() : BelongsToMany
     {
         return $this->belongsToMany(Role::class);
@@ -24,7 +48,7 @@ trait HasRoles
     public function assignRole(...$arr): array
     {
         $arr = collect($arr)->flatten();
-        return $this->roles()->sync($arr,false);
+        return $this->roles()->sync($arr);
     }
     /*
      * This function removes a specific role or an array of roles
@@ -44,6 +68,13 @@ trait HasRoles
     {
         return Role::whereIn('id',$roles)->get();
     }
+//    public function getSingleRoleForCurrentUser()
+//    {
+//        //search the roleUser table
+//        $data = RoleUser::where('user_id', $this->id)->first();
+//        //use this to search the roles table
+//        return Role::find($data->role_id);
+//    }
 
     /*
      * This function checks to see if the current user has a given role

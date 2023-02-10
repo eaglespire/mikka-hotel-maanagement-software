@@ -17,7 +17,6 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('category');
             $table->string('slug')->nullable();
             $table->longText('description')->nullable();
             $table->integer('roomNumber')->unique();
@@ -26,6 +25,7 @@ return new class extends Migration
             $table->boolean('roomClean')->default(true);
             $table->boolean('roomBooked')->default(false);
             $table->boolean('roomShown')->default(false);
+            $table->foreignId('pricing_id')->constrained()->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->timestamps();
         });
     }

@@ -11,16 +11,14 @@
     $filtered = array_filter($images)
  @endphp
 
-@php
-   $routeName = url()->previous();
-@endphp
 @section('content')
     <div class="row">
         <div class="col-lg-12">
-            <div class="d-flex justify-content-between">
-                <h6 class="text-muted">{{ $room->title }}</h6>
-                <x-top-right-btn title="Back" :route="$routeName" icon="left" />
-            </div>
+            <x-back-button header-title="{{ $room->title }}">
+                <a  href="{{ route('b-rooms') }}" class="btn btn-success">
+                    <i class="ion ion-md-create"></i> All Rooms
+                </a>
+            </x-back-button>
             <div class="row">
                 <div class="col-lg-4">
                     <div class="card">
@@ -46,15 +44,6 @@
                             <h6 class="card-subtitle font-14 text-muted">Category: {{ $room->category }}</h6>
                         </div>
                         <img class="img-fluid" src="{{ $room->firstImage }}" alt="Card image cap">
-                        <div class="card-body">
-                            @can(\App\Services\Permissions::CAN_UPDATE_ROOM)
-                                <a href="{{ route('b-edit-room', $room->slug) }}" class="btn btn-primary">Edit</a>
-                            @endcan
-
-                            @can(\App\Services\Permissions::CAN_DELETE_ROOM)
-                                <a href="#" class="btn btn-danger">Delete</a>
-                            @endcan
-                        </div>
                     </div>
                 </div>
                 <div class="col-lg-8">

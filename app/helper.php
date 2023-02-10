@@ -23,12 +23,7 @@ if (!function_exists('build_staff_id'))
     function build_staff_id($date,$firstname,$lastname,$id,$mode = 0) : string
     {
         $idChars = null;
-        $exploded = null;
-        if ($mode == 1){
-            $exploded = explode('-',$date->toDateString());
-        }else{
-            $exploded = explode('-',$date);
-        }
+        $exploded = explode('-',$date);
         //extract first char from firstname
         $fChar = ucfirst(substr($firstname,0,1));
         //extract first char from lastname

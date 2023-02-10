@@ -3,9 +3,9 @@
 @section('content')
     <div class="row">
         <div class="col">
-            <div class="d-flex justify-content-end">
+            <x-back-button header-title="New Feature">
                 <a href="{{ route('b-room-features') }}" class="btn btn-primary mb-2">All Features</a>
-            </div>
+            </x-back-button>
             <div class="card card-body">
                 <form action="{{ route('b-store-feature') }}" method="post" enctype="multipart/form-data">
                     @csrf
@@ -15,10 +15,6 @@
                         @error('name')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
-                    </div>
-                    <div class="form-group">
-                        <label for="" class="form-label">Feature Image(Optional)</label>
-                        <input type="file" class="form-control-file">
                     </div>
                     <div>
                         @error('icon')

@@ -26,7 +26,7 @@ class UpdateRoomRequest extends FormRequest
     {
         return [
             'title'=>['required','string','min:5','max:255'],
-            'category'=>['required','string','min:5','max:255'],
+            'category'=>['required'],
             'desc'=>['required','string','min:5'],
             'roomNumber'=>['required','numeric',Rule::unique('rooms')->ignore($this->request->all()['id'])],
             'price'=>['required','min:1','numeric'],

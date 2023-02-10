@@ -249,7 +249,7 @@ class Blog extends Component
 
         $this->fill([
             'hideModal' => true,
-            'category' => $categories[0]['id'],
+            'category' => null,
             'title'=> null,
             'tags' => null,
             'published' => 1,

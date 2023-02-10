@@ -10,8 +10,15 @@ use Livewire\WithPagination;
 class Faq extends Component
 {
     use CustomPagination;
-    public $question,$answer,$list;
-    public $_id;
+    public $question;
+    public $answer;
+    public $list;
+    public $hidden;
+    public $mode;
+    public $modalHeader;
+    public $btnText;
+    public $hideModal;
+
 
     protected $rules = [
         'question'=>['required'],
@@ -25,16 +32,40 @@ class Faq extends Component
         $this->fill([
             'question' => null,
             'answer' => null,
-            '_id' => null
+            'hidden' =>  null,
+            'modalHeader' => 'Add new FAQ',
+            'mode' => 0,
+            'btnText' => 'Save',
+            'hideModal' => true
         ]);
-
+    }
+    public function OpenModal($mode = 0, $hidden = null)
+    {
+        $this->resetErrorBag();
+         $this->hideModal = false;
+        if ($mode == 1){
+            $this->hidden = $hidden;
+            $faq = \App\Models\Faq::find($this->hidden);
+            $this->question = $faq['question'];
+            $this->answer = $faq['answer'];
+            $this->modalHeader ='Update FAQ';
+            $this->btnText = 'Update';
+        }
+        $this->mode = $mode;
     }
 
-    public function setId(int $id, string $question, string $answer)
+    public function CloseModal()
     {
-        $this->_id = $id;
-        $this->question = $question;
-        $this->answer = $answer;
+        $this->reset([
+            'hidden',
+            'hideModal',
+            'modalHeader',
+            'mode',
+            'btnText',
+            'question',
+            'answer',
+        ]);
+        $this->mount();
     }
     public function SaveEditFaq()
     {
@@ -46,9 +77,10 @@ class Faq extends Component
             'answer' => $this->answer
         ]);
         if ($response){
-            $this->emit('changes-saved');
+            $this->emit('success','Updated successfully');
+            $this->mount();
         }else{
-            $this->emit('changes-not-saved');
+            $this->emit('fail','An error occurred');
         }
         return back();
     }
@@ -57,20 +89,9 @@ class Faq extends Component
         //fetch the faq to update
         $faq = \App\Models\Faq::find($id);
         $faq->delete();
-        $this->emit('changes-saved');
+        $this->emit('success','Deleted successfully');
         return back();
     }
-
-
-
-    public function resetInputFields()
-    {
-        $this->reset(['answer','question','_id']);
-        $this->resetErrorBag();
-    }
-
-
-
     public function AddFaq()
     {
         $this->validate();
@@ -80,11 +101,11 @@ class Faq extends Component
         ]);
         if ($response){
             $this->reset(['question','answer']);
-            $this->emit('added');
-            return back();
+            $this->emit('success','New FAQ Added');
+            $this->mount();
         }else{
-            $this->emit('not-added');
-            return false;
+            $this->emit('fail','An error occurred');
+            return back();
         }
     }
     public function render()

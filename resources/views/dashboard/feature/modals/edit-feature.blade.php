@@ -17,10 +17,6 @@
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="form-group">
-                        <label for="" class="form-label">Feature Image(Optional)</label>
-                        <input type="file" class="form-control-file">
-                    </div>
                     <div>
                         @error('icon')
                             <p class="text-danger">{{ $message }}</p>

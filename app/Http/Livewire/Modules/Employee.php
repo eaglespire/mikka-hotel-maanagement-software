@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Modules;
 
+use App\Exports\ExportStaff;
+use App\Imports\ImportStaffFromExcel;
 use App\Models\User;
 use App\Services\CacheKeys;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -10,12 +12,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class Employee extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     public $hideModal;
     public $modalHeader;
@@ -30,8 +34,9 @@ class Employee extends Component
     public $role;
     public $hidden;
     public $password;
-    public $submitBtnText;
-    public $perPage = 10;
+    public $showUpdatePasswordField;
+    public $perPage = 5;
+    public $file;
 
 
     protected $listeners = ['refresh'=> '$refresh'];
@@ -44,7 +49,7 @@ class Employee extends Component
             'firstname' => ['required','string','max:255'],
             'lastname' => ['required','string','max:255'],
             'email' => ['required','email','max:255',Rule::unique('users')->ignore($this->hidden)],
-            'phone' => ['required','string','max:14'],
+            'phone' => ['nullable','string','max:14'],
             'dob' => ['required','string'],
             'joinDate' => ['required','string',],
         ];
@@ -53,7 +58,7 @@ class Employee extends Component
     public function mount()
     {
         $roles = Cache::remember(CacheKeys::ROLE_CACHE, now()->addDays(30), function (){
-            return Role::get()->except(1);
+            return Role::where('id','>',1)->get();
         });
         $this->fill([
             'hideModal' => true,
@@ -65,11 +70,12 @@ class Employee extends Component
             'dob' => null,
             'joinDate' => null,
             'phone' => null,
-            'roles' => $roles,
-            'role' => $roles[0][1],
+            'roles' => $roles->except(1),
+            'role' => null,
             'hidden' => null,
             'password' => null,
-            'submitBtnText' => 'Submit'
+            'showUpdatePasswordField' => false,
+
         ]);
     }
 
@@ -90,9 +96,9 @@ class Employee extends Component
             $this->joinDate = $staff->join_date;
             $this->phone = $staff->phone;
             $this->hidden = $_id;
-            $this->role = $staff->UserRoleId() ?? 11;
+            $this->role = $staff->roles->first()['id'] ?? null;
             $this->password = $staff->password_text;
-            $this->submitBtnText = 'Update';
+            $this->showUpdatePasswordField = true;
         }
     }
     public function CloseModal()
@@ -113,7 +119,7 @@ class Employee extends Component
     }
     public function LoadMore()
     {
-        $this->perPage = $this->perPage + 10;
+        $this->perPage = $this->perPage + 5;
     }
 
 
@@ -146,10 +152,8 @@ class Employee extends Component
                 'dob' => $this->dob
             ]);
             if ($user){
-                //find the role to assign to the user
-                $role = Role::findById($this->role);
                 //assign the chosen role to the user
-                $user->assignRole($role->name);
+                $user->assignRole($this->role);
                 $response = $user->update([
                     'staff_identity' => build_staff_id($this->dob,$this->firstname,$this->lastname,$user->id)
                 ]);
@@ -173,7 +177,7 @@ class Employee extends Component
             'firstname' => ['required','string','max:255'],
             'lastname' => ['required','string','max:255'],
             'email' => ['required','email','max:255',Rule::unique('users')->ignore($this->hidden)],
-            'phone' => ['required','string','max:14'],
+            'phone' => ['nullable','string','max:14'],
             'dob' => ['nullable',],
             'joinDate' => ['nullable',],
             'password'=>['required','min:6']
@@ -191,12 +195,7 @@ class Employee extends Component
                 'password_text' => $this->password,
                 'dob' => $this->dob
             ]);
-
-            //find the role to assign to the user
-            $role = Role::findById($this->role);
-            //revoke and re-assign the chosen role to the user
-            $user->syncRoles([]);
-            $user->assignRole($role->name);
+            $user->assignRole($this->role);
 
             $response = $user->update([
                 'staff_identity' => build_staff_id($this->dob,$this->firstname,$this->lastname,$user->id,1)
@@ -223,6 +222,20 @@ class Employee extends Component
             Log::error($exception->getMessage());
             $this->emit('error','User not found');
         }
+    }
+    public function ExportStaffData()
+    {
+        return Excel::download(new ExportStaff, 'staff-information.xlsx');
+    }
+
+    public function updatedFile()
+    {
+        $this->validate([
+            'file' => ['required','mimes:xlsx']
+        ]);
+        Excel::import(new ImportStaffFromExcel,$this->file->store('files'));
+        $this->emit('success','Operation successful');
+        $this->mount();
     }
 
     public function render()

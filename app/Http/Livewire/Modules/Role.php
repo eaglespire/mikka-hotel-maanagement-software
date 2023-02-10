@@ -56,18 +56,18 @@ class Role extends Component
             'roleName' => null
         ]);
     }
-    public function OpenModal(int $mode = 0, int $hidden = null)
+    public function OpenModal($mode = 0, $hidden = null)
     {
         $this->resetErrorBag();
         $this->hideModal = false;
         if ($mode == 1){
             $this->hidden = $hidden;
-            $this->mode = $mode;
             $role = \App\Models\Role::find($this->hidden);
             $this->name = $role['name'];
             $this->btnText = 'Update';
             $this->modalHeader ='Update';
         }
+        $this->mode = $mode;
     }
     public function CloseModal()
     {
@@ -147,10 +147,8 @@ class Role extends Component
         $response = $this->role->assignPermission($id);
         if ($response){
             Artisan::call('cache:clear');
-           // Cache::forget(CacheKeys::PERMISSIONS_CACHE);
             $this->emit('success','Success');
             return redirect(request()->header('Referer'));
-            $this->mount();
         }else{
             $this->emit('fail','An error occurred');
         }
@@ -159,10 +157,9 @@ class Role extends Component
     public function RevokePermission(int $id)
     {
         $this->role->revokePermission($id);
-        Artisan::call('cache:clear');
-        //Cache::forget(CacheKeys::PERMISSIONS_CACHE);
         $this->emit('success','Permission revoked');
-        $this->mount();
+        Artisan::call('cache:clear');
+        return redirect(request()->header('Referer'));
     }
     public function render()
     {

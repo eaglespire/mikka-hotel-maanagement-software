@@ -34,9 +34,9 @@ Route::controller(DashboardController::class)->group(function (){
 Route::get('/test', function (){
     $role1 = \App\Models\Role::find(1);
     $role2 = \App\Models\Role::find(2);
-    $user = \App\Models\User::find(1);
+    $user = \App\Models\User::find(2);
    //$res = $user->roles()->sync([1,3]);
- $res = $user->countPermissions();
+ $res = $user->roles->first();
     dd($res);
 });
 Route::get('/test2', function (){

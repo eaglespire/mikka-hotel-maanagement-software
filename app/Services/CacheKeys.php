@@ -17,4 +17,6 @@ class CacheKeys
     public const POST_CATEGORY_CACHE = 'postCategoryCache';
     public const POST_CACHE = 'postCache';
     public const TAX_CACHE = 'taxCache';
+    public const USERS_CACHE = 'usersCache';
+    public const USERS_PAYROLL_DATA_CACHE = 'usersPayrollDataCache';
 }

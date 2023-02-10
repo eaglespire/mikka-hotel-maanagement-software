@@ -22,7 +22,7 @@
         <div class="d-flex justify-content-between my-2 align-items-center">
             <div class="d-flex align-items-center">
                 <h4 class="header-title mr-2">All Categories</h4>
-                @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                @can(\App\Services\Permissions::CAN_CREATE_BLOG)
                     <button class="btn btn-primary" wire:click.prevent="OpenCreateModal">
                         <i class="ion ion-md-create "></i>  Create
                     </button>
@@ -42,7 +42,7 @@
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
+                    @can(\App\Services\Permissions::CAN_CREATE_BLOG)
                         <th>Action</th>
                     @endcan
                 </tr>
@@ -55,13 +55,13 @@
                                 <td>{{ $category['name'] }}</td>
                                 <td>
                                     <div class="d-flex">
-                                        @can(\App\Services\Permissions::CAN_UPDATE_BLOG_POST)
+                                        @can(\App\Services\Permissions::CAN_UPDATE_BLOG)
                                             <a wire:click.prevent="LaunchEditModal({{ $category['id'] }},'{{ $category['name'] }}')" href="" class="btn
                                         btn-secondary">
                                                 <i class="typcn typcn-edit "></i> edit
                                             </a>
                                         @endcan
-                                      @can(\App\Services\Permissions::CAN_DELETE_BLOG_POST)
+                                      @can(\App\Services\Permissions::CAN_DELETE_BLOG)
                                             <a wire:click.prevent="DeleteCategory({{ $category['id'] }})" href="" class="btn btn-danger mx-2">
                                                 <i class="typcn typcn-trash "></i> trash
                                             </a>

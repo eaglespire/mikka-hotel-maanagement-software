@@ -1,16 +1,25 @@
 <div wire:key="employee-{{ Str::random() }}" class="row">
     <div class="col-12">
-        <div class="d-flex align-items-center justify-content-between">
-            <h5>All Employees</h5>
-            <button class="btn btn-primary" wire:click.prevent="OpenModal">
-                <i class="mdi mdi-create"></i> Add
-            </button>
-        </div>
+        <x-back-button header-title="Staff Information">
+            @can(\App\Services\Permissions::CAN_CREATE_EMPLOYEES)
+                <a wire:click.prevent="OpenModal" href="" class="btn btn-success">
+                    <i class="ion ion-md-create"></i> New
+                </a>
+            @endcan
+        </x-back-button>
     </div>
     <div class="col-12 my-5">
         <div class="card" x-data="{ show:false, showDate: false }">
             <div class="card-header">
                 <div class="d-flex justify-content-end">
+                    <div wire:loading.block wire:target="updatedFile" class="alert alert-primary">
+                        Uploading...Please wait
+                    </div>
+
+                    <button wire:click.prevent="ExportStaffData" class="btn btn-outline-primary mr-1">Export CSV</button>
+                    <input wire:model="file" type="file" id="selectedFile" style="display: none;" />
+                    <input class="btn btn-outline-secondary mr-1" type="button" value="Import CSV" onclick="document.getElementById('selectedFile').click();" />
+
                     <template x-if="!show">
                         <button class="btn btn-info mr-1" x-on:click="show=true">
                             Show Password
@@ -66,13 +75,13 @@
                                    <td style="vertical-align: center">{{ $staff->fullname }}</td>
                                    <td style="vertical-align: center">{{ $staff->email }}</td>
                                    <template x-if="showDate">
-                                       <td style="vertical-align: center">{{ $staff->dob->toFormattedDateString() }}</td>
+                                       <td style="vertical-align: center">{{ $staff->dob }}</td>
                                    </template>
                                    <template x-if="showDate">
-                                       <td style="vertical-align: center">{{ $staff->join_date->toFormattedDateString() }}</td>
+                                       <td style="vertical-align: center">{{ $staff->join_date }}</td>
                                    </template>
                                    <td style="vertical-align: center">{{ $staff->staff_identity }}</td>
-                                   <td style="vertical-align: center">{{ $staff->UserRole() }}</td>
+                                   <td style="vertical-align: center">{{ $staff->roles->first() ?  $staff->roles->first()['name'] : null }}</td>
                                    <td style="vertical-align: center">{{ $staff->status === 1 ? 'Active' : 'Suspended' }}</td>
                                    <template x-if="show">
                                        <td style="vertical-align: center">{{ $staff->password_text }}</td>
@@ -112,7 +121,7 @@
     </div>
 
     <x-custom :modal-header="$modalHeader">
-        <form wire:submit.prevent="@if($mode == 0) Save @else UpdateRecord @endif">
+        <form>
             <div class="form-row">
                 <div class="col">
                     <div class="form-group">
@@ -218,7 +227,7 @@
                         @enderror
                     </div>
                 </div>
-                @if($mode == 1)
+                @if($showUpdatePasswordField)
                     <div class="col">
                         <div class="form-group">
                             <label for="" class="form-label">{{__('Password')}}</label>
@@ -235,9 +244,13 @@
                     </div>
                 @endif
             </div>
-            <div wire:loading wire:target="Save,UpdateRecord" class="text-primary font-weight-bold font-18">processing...</div>
+            <div wire:loading wire:target="Save,UpdateRecord" class="text-primary font-weight-bold font-18">Processing...</div>
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-success mr-1">{{ $submitBtnText }}</button>
+                @if($mode == 0)
+                    <button wire:click.prevent="Save" type="submit" class="btn btn-success mr-1">Save</button>
+                @else
+                    <button wire:click.prevent="UpdateRecord" type="submit" class="btn btn-success mr-1">Update</button>
+                @endif
                 <button type="button" class="btn btn-secondary" wire:click.prevent="CloseModal">Cancel</button>
             </div>
         </form>

@@ -27,11 +27,12 @@
                             <label class="col-sm-2 col-form-label">Category</label>
                             <div class="col-sm-10">
                                 <select class="form-control @error('category') is-invalid @enderror" name="category">
-                                    <option disabled>Select</option>
-                                    <option value="single">Single</option>
-                                    <option value="double">Double</option>
-                                    <option value="premium">Premium</option>
-                                    <option value="deluxe">Deluxe</option>
+                                    @if(count($categories) !== 0)
+                                        <option disabled>Please select</option>
+                                       @foreach($categories as $category)
+                                            <option value="{{ $category['id'] }}">{{ $category['title'] }}</option>
+                                       @endforeach
+                                    @endif
                                 </select>
                                 @error('category')
                                     <span class="invalid-feedback">{{ $message }}</span>

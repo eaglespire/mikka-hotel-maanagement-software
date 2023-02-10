@@ -33,9 +33,7 @@
                 <li>
                     <a href="{{ route('b-faq') }}" class="waves-effect"><i class="ti-calendar"></i><span> FAQ </span></a>
                 </li>
-                <li>
-                    <a href="{{ route('b-pricing') }}" class="waves-effect"><i class="ti-calendar"></i><span> Pricing </span></a>
-                </li>
+
                 <li>
                     <a href="javascript:void(0);" class="waves-effect"><i class="ti-package"></i> <span> Blog <span
                                 class="float-right menu-arrow"><i class="mdi mdi-chevron-right"></i></span> </span> </a>
@@ -50,8 +48,9 @@
                     <a href="javascript:void(0);" class="waves-effect"><i class="ti-package"></i> <span> Rooms <span
                                 class="float-right menu-arrow"><i class="mdi mdi-chevron-right"></i></span> </span> </a>
                     <ul class="submenu">
-                        <li><a href="{{ route('modules.room.index') }}">All Rooms</a></li>
-                        <li><a href="{{ route('b-room-features') }}">All Features</a></li>
+                        <li><a href="{{ route('b-rooms') }}">All Rooms</a></li>
+                        <li><a href="{{ route('b-room-features') }}">Features</a></li>
+                        <li><a href="{{ route('b-room-categories') }}">Categories</a></li>
                     </ul>
                 </li>
                 @can(\App\Services\Permissions::CAN_ACCESS_BOOKING)
@@ -108,12 +107,7 @@
                 @endcan
                 @can(\App\Services\Permissions::CAN_ACCESS_INVOICES)
                     <li>
-                        <a href="javascript:void(0);" class="waves-effect"><i class="ti-pie-chart"></i><span> Payroll <span
-                                    class="float-right menu-arrow"><i class="mdi mdi-chevron-right"></i></span> </span></a>
-                        <ul class="submenu">
-                            <li><a href="hh.html">All Payrolls</a></li>
-                            <li><a href="r.html">Add Payroll</a></li>
-                        </ul>
+                        <a href="{{ route('b-payment.salaries-staff') }}" class="waves-effect"><i class="ti-id-badge"></i><span>Payroll </span></a>
                     </li>
                 @endcan
 

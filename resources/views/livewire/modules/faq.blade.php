@@ -1,18 +1,12 @@
 <div class="row">
     <div class="col-lg-12">
-        <div class="d-flex justify-content-between my-2 align-items-center">
-            <div class="d-flex align-items-center">
-                <h4 class="header-title mr-2">FAQ</h4>
-                @can(\App\Services\Permissions::CAN_CREATE_BLOG_POST)
-                    <button class="btn btn-primary" wire:click.prevent="$emit('open-modal')">
-                        <i class="ion ion-md-create"></i> Create
-                    </button>
-                @endcan
-            </div>
-            <a href="{{ url()->previous() }}" class="btn btn-primary">
-                <i class="typcn typcn-chevron-left"></i> Back
-            </a>
-        </div>
+        @can(\App\Services\Permissions::CAN_CREATE_BLOG)
+            <x-back-button header-title="FAQ">
+                <a wire:click.prevent="OpenModal" href="" class="btn btn-success">
+                    <i class="ion ion-md-create"></i> New
+                </a>
+            </x-back-button>
+        @endcan
         <div class="card">
             <div class="card-body">
                 <div class="row justify-content-center">
@@ -21,10 +15,9 @@
                             @if($items->total() > 0)
                                 @foreach($items as $item)
                                     <div class="card mb-0">
-                                        @can(\App\Services\Permissions::CAN_UPDATE_BLOG_POST && \App\Services\Permissions::CAN_DELETE_BLOG_POST)
+                                        @can(\App\Services\Permissions::CAN_UPDATE_BLOG && \App\Services\Permissions::CAN_DELETE_BLOG)
                                             <div class="d-lg-flex" style="cursor: pointer">
-                                                <i wire:click.prevent="$emit('open-edit-modal',{{ $item['id'] }},'{{ $item['question'] }}','{{
-                                            $item['answer'] }}')" class="typcn
+                                                <i wire:click.prevent="OpenModal(1,'{{ $item['id'] }}')" class="typcn
                                             typcn-edit text-primary" style="font-size: 30px"></i>
                                                 <i wire:click.prevent="DeleteFaq({{ $item['id'] }})" class="typcn typcn-delete text-danger"
                                                    style="font-size:
@@ -63,84 +56,53 @@
             </div>
         </div>
     </div>
-    <!-- modal -->
-    <div wire:ignore.self class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display:
-    none;"  aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    @if(!empty($_id))
-                        <h5 class="modal-title mt-0">Edit FAQ</h5>
-                    @else
-                        <h5 class="modal-title mt-0">Add FAQ</h5>
-                    @endif
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                </div>
-                <div class="modal-body">
-                    <form action="">
-                        <div class="form-group">
-                            <label for="" class="form-label">
-                                Question
-                            </label>
-                            <textarea wire:model.defer="question" cols="30" rows="5" class="form-control @error('question') is-invalid @enderror"
-                                      placeholder="question"></textarea>
-                            @error('question')
-                                <p class="text-danger">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="" class="form-label">
-                                Answer
-                            </label>
-                            <textarea wire:model.defer="answer" cols="30" rows="5" class="form-control @error('answer') is-invalid @enderror"
-                                      placeholder="answer"></textarea>
-                            @error('answer')
-                                <p class="text-danger">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        @if(!empty($_id))
-                            @include('includes.processing', ['action' => 'SaveEditFaq'])
-                            <div wire:loading.block wire:target="SaveEditFaq">Processing</div>
-                            <button wire:click.prevent="SaveEditFaq" class="btn btn-primary">Update</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        @else
-                            @include('includes.processing', ['action' => 'AddFaq'])
-                            <button wire:click.prevent="AddFaq" class="btn btn-primary">Add</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        @endif
+    <x-custom :modal-header="$modalHeader">
+        <form>
+            <div class="form-group">
+                <label for="" class="form-label"> Question  </label>
+                <textarea wire:model.defer="question" cols="30" rows="5" class="form-control @error('question') is-invalid @enderror"
+                          placeholder="question"></textarea>
+                @error('question')
+                    <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="" class="form-label">Answer </label>
+                <textarea wire:model.defer="answer" cols="30" rows="5" class="form-control @error('answer') is-invalid @enderror"
+                          placeholder="answer"></textarea>
+                @error('answer')
+                <p class="text-danger">{{ $message }}</p>
+                @enderror
+            </div>
+            <div wire:loading.block wire:target="SaveEditFaq" class="alert alert-info">Processing</div>
+            @if($mode == 0)
+                <button wire:click.prevent="AddFaq" class="btn btn-primary">{{ $btnText }}</button>
+            @else
+                <button wire:click.prevent="SaveEditFaq" class="btn btn-primary">{{ $btnText }}</button>
+            @endif
 
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-    <!-- END OF MODAL -->
+
+        </form>
+    </x-custom>
+
 </div>
 
 @push('scripts')
     <script>
         window.addEventListener('DOMContentLoaded', function (){
-            @this.on('open-modal', event => {
-                $('.bs-example-modal-center').modal('show')
-            })
-            @this.on('open-edit-modal',( id,question,answer )=> {
-                $('.bs-example-modal-center').modal('show')
-                @this.emitSelf('setId',id,question,answer)
-            })
-            @this.on('changes-saved', event => {
+            @this.on('success', message => {
                 Swal.fire({
                     icon:'success',
                     title:'Success',
+                    text: message
                 })
             })
-            @this.on('changes-not-saved', event => {
+            @this.on('fail', message => {
                 Swal.fire({
                     icon:'warning',
                     title:'Error',
+                    text: message
                 })
-            })
-            $('.bs-example-modal-center').on('hide.bs.modal', function () {
-                @this.call('resetInputFields')
             })
         })
     </script>

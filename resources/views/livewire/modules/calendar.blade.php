@@ -1,18 +1,12 @@
 <div class="row" wire:key="calendar-module-{{ Str::random() }}">
     <div class="col-md-12">
-        <div class="d-flex justify-content-between my-2 align-items-center">
-            <div class="d-flex align-items-center">
-                <h4 class="header-title mr-2">Calendar</h4>
-                @can(\App\Services\Permissions::CAN_MANAGE_SETTINGS)
-                    <button class="btn btn-primary" wire:click.prevent="ToggleModal">
-                        <i class="ion ion-md-create"></i> Create
-                    </button>
-                @endcan
-            </div>
-            <a href="{{ url()->previous() }}" class="btn btn-primary">
-                <i class="typcn typcn-chevron-left"></i> Back
+        @can(\App\Services\Permissions::CAN_ACCESS_EVENTS)
+        <x-back-button header-title="Events">
+            <a wire:click.prevent="OpenModal" href="" class="btn btn-success">
+                <i class="ion ion-md-create"></i> New
             </a>
-        </div>
+        </x-back-button>
+        @endcan
     </div>
 
     <div class="col-md-12 my-3">
@@ -27,7 +21,7 @@
                                 <th>Name</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                @can(\App\Services\Permissions::CAN_MANAGE_SETTINGS)
+                                @can(\App\Services\Permissions::CAN_ACCESS_SETTINGS)
                                     <th style="min-width: 100px">Action</th>
                                 @endcan
                             </tr>
@@ -39,10 +33,10 @@
                                     <td>{{ $event->name }}</td>
                                     <td>{{ $event->start_time }}</td>
                                     <td>{{ $event->finish_time }}</td>
-                                    @can(\App\Services\Permissions::CAN_MANAGE_SETTINGS)
+                                    @can(\App\Services\Permissions::CAN_ACCESS_SETTINGS)
                                         <td>
                                             <div class="d-flex align-items-center list-user-action">
-                                                <button class="btn btn-secondary mr-1" wire:click.prevent="LaunchEditModal({{ $event->id }})">
+                                                <button class="btn btn-secondary mr-1" wire:click.prevent="OpenModal(1,'{{ $event['id'] }}')">
                                                     <i class="ti-marker-alt"></i> edit
                                                 </button>
                                                 <button wire:click.prevent="$emit('delete-event',{{ $event->id }})" class="btn btn-danger">
@@ -68,10 +62,7 @@
         <div id="calendar"></div>
     </div>
 
-    <x-calendar>
-        <x-slot name="header">
-            Calendar Events
-        </x-slot>
+    <x-custom :modal-header="$modalHeader">
         <form>
             <div class="form-group">
                 <label class="form-label" for="email">Title:</label>
@@ -81,7 +72,7 @@
                     required
                     type="text"
                     class="form-control @error('title') is-invalid @enderror"
-                    >
+                >
                 @error('title')
                 <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
@@ -104,49 +95,25 @@
                 <label class="form-label">Comment</label>
                 <textarea wire:model.defer="comment" cols="30" rows="5" class="form-control"></textarea>
             </div>
-            <div class="my-2" wire:loading.block wire:target='SaveNewEvent,UpdateEvent'>
-                <div class="alert alert-info">
-                    Processing...
-                </div>
+            <div class="my-2 alert alert-info" wire:loading.block wire:target='SaveNewEvent,UpdateEvent'>
+                processing...
             </div>
-
-            @if($mode === 'Update Event')
-                <button wire:click.prevent="UpdateEvent" type="submit" class="btn btn-primary">Update</button>
-            @else
-                <button wire:click.prevent="SaveNewEvent" type="submit" class="btn btn-primary">Submit</button>
-            @endif
-            <button wire:click.prevent="ToggleModal()" type="button" class="btn btn-danger">Cancel</button>
+              @if($mode === 0)
+                <button wire:click.prevent="SaveNewEvent" type="submit" class="btn btn-primary">{{ $btnText }}</button>
+              @else
+                <button wire:click.prevent="UpdateEvent" type="submit" class="btn btn-primary">{{ $btnText }}</button>
+              @endif
         </form>
-    </x-calendar>
+    </x-custom>
+
 </div>
 
 
 @push('scripts')
     <script type="text/javascript">
         window.addEventListener('DOMContentLoaded', function () {
-            @this.on('triggerDelete', eventId => {
-                Swal.fire({
-                    title: 'Are You Sure?',
-                    text: 'Event will be deleted!',
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: 'Delete!'
-                }).then((result) => {
-                    //if user clicks on delete
-                    if (result.value) {
-                        // calling deleteEvent method to delete
-                        @this.call('deleteEvent',eventId)
-                        // success response
-                        Swal.fire({title: 'Event deleted successfully!', icon: 'success'});
-                    } else {
-                        Swal.fire({
-                            title: 'Operation Cancelled!',
-                            icon: 'success'
-                        });
-                    }
-                });
-            });
-            @this.on('changes-saved', () => {
+
+            @this.on('success', () => {
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
@@ -156,7 +123,7 @@
                     timer: 10000
                 })
             })
-            @this.on('changes-not-saved', () => {
+            @this.on('fail', () => {
                 Swal.fire({
                     icon: 'Error',
                     title: 'An error occurred',
@@ -165,15 +132,21 @@
                     timer: 10000
                 })
             })
+
             @this.on('delete-event', id => {
                 Swal.fire({
                     icon: 'question',
                     title: 'Proceed to delete?',
                     confirmButtonText: 'Yes, delete',
-                    showCancelButton:true
+                    showCancelButton:true,
+                    confirmButtonColor:'#EC4561'
                 }).then(response => {
                     if(response.isConfirmed){
                         @this.call('DeleteEvent',id)
+                    }  else{
+                        Swal.fire({
+                            text:'Operation cancelled'
+                        })
                     }
                 })
 

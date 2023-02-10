@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\About;
 use App\Models\Faq;
 use App\Models\Feature;
+use App\Models\Payroll;
 use App\Models\Permission;
 use App\Models\Postcategory;
 use App\Models\Pricing;
@@ -17,6 +18,7 @@ use App\Observers\AboutPageSettingsObserver;
 use App\Observers\EventObserver;
 use App\Observers\FaqObserver;
 use App\Observers\FeatureObserver;
+use App\Observers\PayrollObserver;
 use App\Observers\PermissionObserver;
 use App\Observers\PostCategoryObserver;
 use App\Observers\PricingObserver;
@@ -63,6 +65,7 @@ class EventServiceProvider extends ServiceProvider
         Pricing::observe(PricingObserver::class);
         Postcategory::observe(PostCategoryObserver::class);
         Tax::observe(TaxObserver::class);
+        //Payroll::observe(PayrollObserver::class);
     }
 
     /**

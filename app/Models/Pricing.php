@@ -10,11 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Pricing extends Model
 {
     use HasFactory;
+    protected $with = ['rooms'];
     protected $fillable = [
         'title','subtitle','tag','slug','image','url','price'
     ];
     public function features() : BelongsToMany
     {
         return $this->belongsToMany(Feature::class);
+    }
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
     }
 }

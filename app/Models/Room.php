@@ -9,15 +9,21 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Room extends Model
 {
     use HasFactory;
+    //protected $with = ['pricing'];
     protected $fillable = [
-        'title','category','extraInfo','description','price',
+        'title','extraInfo','description','price',
         'roomNumber','roomClean','roomShown','roomBooked','slug',
         'firstImage','secondImage','thirdImage','fourthImage','fifthImage','sixthImage',
         'f1_public_id','f2_public_id','f3_public_id','f4_public_id','f5_public_id','f6_public_id',
+        'pricing_id',
     ];
 
     public function features() : HasMany
     {
         return $this->hasMany(Feature::class);
+    }
+    public function pricing()
+    {
+        return $this->belongsTo(Pricing::class);
     }
 }
